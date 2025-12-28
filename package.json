@@ -1,7 +1,8 @@
 {
   "name": "help-it",
   "version": "1.0.0",
-  "description": "Help IT - Just call the HIT man",
+  "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
