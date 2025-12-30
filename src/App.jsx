@@ -211,7 +211,7 @@ export default function HelpIT() {
       }}>
         <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-center">
           <img 
-            src="/hit-man-bg.jpg" 
+            src="/hit-man-bg.png" 
             alt="Help IT - Just Call the HIT Man" 
             style={{
               maxWidth: '600px',
