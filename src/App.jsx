@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Ticket, MessageSquare, Loader2, User } from 'lucide-react';
+import { Send, Ticket, MessageSquare, Loader2, User, X, Mail } from 'lucide-react';
 
 export default function HelpIT() {
   const [messages, setMessages] = useState([
@@ -8,8 +8,12 @@ export default function HelpIT() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showTicket, setShowTicket] = useState(false);
+  const [showEmailPrompt, setShowEmailPrompt] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
+  const [optionalEmail, setOptionalEmail] = useState('');
   const [ticketData, setTicketData] = useState({ name: '', email: '', phone: '', issue: '', priority: 'medium' });
   const messagesEndRef = useRef(null);
+  const messageCount = useRef(0);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -19,6 +23,13 @@ export default function HelpIT() {
     scrollToBottom();
   }, [messages]);
 
+  // Show email prompt after 3 messages
+  useEffect(() => {
+    if (messages.length >= 7 && !showEmailPrompt && !optionalEmail) {
+      setShowEmailPrompt(true);
+    }
+  }, [messages]);
+
   const handleSend = async () => {
     if (!input.trim() || loading) return;
 
@@ -26,6 +37,7 @@ export default function HelpIT() {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setLoading(true);
+    messageCount.current += 1;
 
     try {
       const response = await fetch('/.netlify/functions/chat', {
@@ -59,14 +71,33 @@ export default function HelpIT() {
     }
   };
 
-  const handleTicketSubmit = () => {
+  const handleTicketSubmit = async () => {
     if (!ticketData.name || !ticketData.email || !ticketData.issue) {
       alert('Please fill in your name, email, and describe the issue');
       return;
     }
-    alert(`Your ticket has been submitted.\n\nWe'll take care of it within 24 hours.\n\nName: ${ticketData.name}\nEmail: ${ticketData.email}\nPhone: ${ticketData.phone || 'Not provided'}`);
-    setTicketData({ name: '', email: '', phone: '', issue: '', priority: 'medium' });
-    setShowTicket(false);
+
+    try {
+      const response = await fetch('/.netlify/functions/submit-ticket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(ticketData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`✅ ${data.message}\n\nWe'll take care of it within 24 hours.`);
+        setTicketData({ name: '', email: '', phone: '', issue: '', priority: 'medium' });
+        setShowTicket(false);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      alert('Failed to submit ticket. Please try again or email us directly.');
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -103,6 +134,28 @@ export default function HelpIT() {
         zIndex: 0
       }} />
 
+      {/* Top Banner */}
+      {showBanner && (
+        <div className="relative z-20" style={{
+          background: 'linear-gradient(90deg, rgba(217, 119, 6, 0.15) 0%, rgba(146, 64, 14, 0.15) 100%)',
+          borderBottom: '1px solid rgba(217, 119, 6, 0.3)',
+          padding: '12px 20px'
+        }}>
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Mail size={20} style={{color: '#fbbf24'}} />
+              <p className="text-sm" style={{color: '#fbbf24'}}>
+                💡 Need follow-up help? Submit a ticket for email updates and dedicated support.
+              </p>
+            </div>
+            <button onClick={() => setShowBanner(false)} style={{color: '#d97706'}}>
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
       <header className="relative z-10 border-b" style={{
         background: 'linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%)',
         borderBottomColor: 'rgba(217, 119, 6, 0.3)',
@@ -172,6 +225,7 @@ export default function HelpIT() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Chat Section */}
           <div className="lg:col-span-2">
             <div className="rounded-2xl shadow-2xl flex flex-col" style={{
               height: 'calc(100vh - 240px)',
@@ -243,6 +297,50 @@ export default function HelpIT() {
                     </div>
                   </div>
                 )}
+
+                {/* Smart Email Prompt */}
+                {showEmailPrompt && (
+                  <div className="rounded-2xl p-6 shadow-2xl border-2" style={{
+                    background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%)',
+                    borderColor: 'rgba(251, 191, 36, 0.6)'
+                  }}>
+                    <h3 className="font-bold text-lg mb-2" style={{color: '#fbbf24'}}>💼 The HIT Man here...</h3>
+                    <p className="text-sm mb-4" style={{color: '#f5f5f4'}}>
+                      If you need me to handle this personally, submit a ticket and I'll take care of it.
+                    </p>
+                    <div className="mb-4 text-sm" style={{color: '#d97706'}}>
+                      <p className="mb-1">✓ Email updates on your issue</p>
+                      <p className="mb-1">✓ Direct line to support</p>
+                      <p>✓ Track your ticket status</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setShowEmailPrompt(false);
+                          setShowTicket(true);
+                        }}
+                        className="flex-1 px-4 py-3 rounded-lg font-bold transition-all"
+                        style={{
+                          background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
+                          color: '#000'
+                        }}
+                      >
+                        Submit Ticket
+                      </button>
+                      <button
+                        onClick={() => setShowEmailPrompt(false)}
+                        className="px-4 py-3 rounded-lg transition-all"
+                        style={{
+                          background: 'rgba(120, 113, 108, 0.3)',
+                          color: '#d97706'
+                        }}
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div ref={messagesEndRef} />
               </div>
 
@@ -250,6 +348,36 @@ export default function HelpIT() {
                 background: 'rgba(0, 0, 0, 0.6)',
                 borderTop: '2px solid rgba(217, 119, 6, 0.3)'
               }}>
+                {/* Optional Email Field */}
+                <div className="mb-3 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="emailUpdates"
+                    checked={!!optionalEmail}
+                    onChange={(e) => {
+                      if (!e.target.checked) setOptionalEmail('');
+                    }}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="emailUpdates" className="text-sm" style={{color: '#fbbf24'}}>
+                    Email me if you find a solution (optional)
+                  </label>
+                </div>
+                {optionalEmail !== null && (
+                  <input
+                    type="email"
+                    value={optionalEmail}
+                    onChange={(e) => setOptionalEmail(e.target.value)}
+                    placeholder="your.email@example.com"
+                    className="w-full px-4 py-2 rounded-lg mb-2 text-sm"
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      border: '1px solid rgba(217, 119, 6, 0.4)',
+                      color: '#f5f5f4'
+                    }}
+                  />
+                )}
+
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -288,6 +416,7 @@ export default function HelpIT() {
             </div>
           </div>
 
+          {/* Sidebar */}
           <div className="lg:col-span-1">
             {showTicket ? (
               <div className="rounded-2xl shadow-2xl p-6" style={{
