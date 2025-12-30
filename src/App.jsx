@@ -162,8 +162,8 @@ export default function HelpIT() {
         borderBottomWidth: '2px',
         boxShadow: '0 4px 20px rgba(217, 119, 6, 0.2)'
       }}>
-        <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-          <div className="flex flex-col items-center" style={{flex: 1}}>
+        <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-center">
+          <div className="flex flex-col items-center">
             <div className="mb-2" style={{
               width: '60px',
               height: '60px',
@@ -206,31 +206,17 @@ export default function HelpIT() {
               We'll take care of it.
             </p>
           </div>
-          
-          <button
-            onClick={() => setShowTicket(!showTicket)}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all shadow-lg"
-            style={{
-              background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
-              color: '#000',
-              border: '2px solid #fbbf24',
-              boxShadow: '0 0 20px rgba(251, 191, 36, 0.4)'
-            }}
-          >
-            <Ticket size={20} />
-            Get Help
-          </button>
         </div>
       </header>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Chat Section */}
+          {/* Chat Section - Made Wider */}
           <div className="lg:col-span-2">
             <div className="rounded-2xl shadow-2xl flex flex-col" style={{
-              height: 'calc(100vh - 240px)',
-              maxHeight: '700px',
-              minHeight: '500px',
+              height: 'calc(100vh - 200px)',
+              maxHeight: '900px',
+              minHeight: '600px',
               background: 'rgba(0, 0, 0, 0.7)',
               border: '2px solid rgba(217, 119, 6, 0.4)',
               boxShadow: '0 0 40px rgba(217, 119, 6, 0.2), inset 0 0 60px rgba(217, 119, 6, 0.05)'
@@ -268,16 +254,18 @@ export default function HelpIT() {
                     }}>
                       <User size={20} style={{color: msg.role === 'user' ? '#fff' : '#000'}} />
                     </div>
-                    <div className={`max-w-[80%] rounded-2xl px-5 py-3 shadow-lg`} style={{
+                    <div className={`max-w-[85%] rounded-2xl px-5 py-3 shadow-lg`} style={{
                       background: msg.role === 'user'
                         ? 'linear-gradient(135deg, rgba(68, 64, 60, 0.8) 0%, rgba(41, 37, 36, 0.9) 100%)'
                         : 'linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(0, 0, 0, 0.6) 100%)',
                       border: msg.role === 'user'
                         ? '1px solid rgba(120, 113, 108, 0.5)'
                         : '1px solid rgba(217, 119, 6, 0.4)',
-                      color: '#f5f5f4'
+                      color: '#f5f5f4',
+                      wordWrap: 'break-word',
+                      overflowWrap: 'break-word'
                     }}>
-                      <p className="text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                      <p className="text-base leading-relaxed whitespace-pre-wrap" style={{wordBreak: 'break-word'}}>{msg.content}</p>
                     </div>
                   </div>
                 ))}
@@ -378,14 +366,14 @@ export default function HelpIT() {
                   />
                 )}
 
-                <div className="flex gap-2">
-                  <input
-                    type="text"
+                <div className="flex gap-2 mb-3">
+                  <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Tell me what's wrong..."
-                    className="flex-1 px-4 py-3 rounded-xl focus:outline-none text-base"
+                    rows={2}
+                    className="flex-1 px-4 py-3 rounded-xl focus:outline-none text-base resize-none"
                     style={{
                       background: 'rgba(0, 0, 0, 0.6)',
                       border: '2px solid rgba(217, 119, 6, 0.5)',
@@ -412,6 +400,21 @@ export default function HelpIT() {
                     <Send size={20} />
                   </button>
                 </div>
+
+                {/* Get Help Button at Bottom */}
+                <button
+                  onClick={() => setShowTicket(!showTicket)}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold transition-all shadow-lg"
+                  style={{
+                    background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
+                    color: '#000',
+                    border: '2px solid #fbbf24',
+                    boxShadow: '0 0 20px rgba(251, 191, 36, 0.4)'
+                  }}
+                >
+                  <Ticket size={20} />
+                  Get Personal Help
+                </button>
               </div>
             </div>
           </div>
