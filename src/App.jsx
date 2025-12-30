@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Ticket, MessageSquare, Loader2, User, X, Mail } from 'lucide-react';
+import { Send, Ticket, MessageSquare, Loader2, User, X, Mail, Image as ImageIcon, XCircle } from 'lucide-react';
 
 export default function HelpIT() {
   const [messages, setMessages] = useState([
@@ -11,8 +11,11 @@ export default function HelpIT() {
   const [showEmailPrompt, setShowEmailPrompt] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
   const [optionalEmail, setOptionalEmail] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [ticketData, setTicketData] = useState({ name: '', email: '', phone: '', issue: '', priority: 'medium' });
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
   const messageCount = useRef(0);
 
   const scrollToBottom = () => {
@@ -23,19 +26,64 @@ export default function HelpIT() {
     scrollToBottom();
   }, [messages]);
 
-  // Show email prompt after 3 messages
   useEffect(() => {
     if (messages.length >= 7 && !showEmailPrompt && !optionalEmail) {
       setShowEmailPrompt(true);
     }
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image too large! Please select an image under 5MB.');
+        return;
+      }
 
-    const userMessage = { role: 'user', content: input };
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file (JPG, PNG, etc.)');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result.split(',')[1];
+        setSelectedImage({
+          data: base64String,
+          type: file.type,
+          name: file.name
+        });
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSend = async () => {
+    if ((!input.trim() && !selectedImage) || loading) return;
+
+    const userMessage = {
+      role: 'user',
+      content: input || 'Please analyze this image',
+      image: selectedImage
+    };
+
     setMessages(prev => [...prev, userMessage]);
     setInput('');
+    const currentImage = selectedImage;
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     setLoading(true);
     messageCount.current += 1;
 
@@ -134,7 +182,6 @@ export default function HelpIT() {
         zIndex: 0
       }} />
 
-      {/* Top Banner */}
       {showBanner && (
         <div className="relative z-20" style={{
           background: 'linear-gradient(90deg, rgba(217, 119, 6, 0.15) 0%, rgba(146, 64, 14, 0.15) 100%)',
@@ -155,7 +202,7 @@ export default function HelpIT() {
         </div>
       )}
 
-      {/* Header */}
+      {/* Header with Logo Image */}
       <header className="relative z-10 border-b" style={{
         background: 'linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%)',
         borderBottomColor: 'rgba(217, 119, 6, 0.3)',
@@ -163,55 +210,21 @@ export default function HelpIT() {
         boxShadow: '0 4px 20px rgba(217, 119, 6, 0.2)'
       }}>
         <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-center">
-          <div className="flex flex-col items-center">
-            <div className="mb-2" style={{
-              width: '60px',
-              height: '60px',
-              background: 'radial-gradient(circle, rgba(217, 119, 6, 0.2) 0%, transparent 70%)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                <path d="M20 8 C12 8, 10 12, 10 14 L30 14 C30 12, 28 8, 20 8 Z" fill="#d97706" opacity="0.9"/>
-                <ellipse cx="20" cy="14" rx="11" ry="2" fill="#d97706"/>
-                <ellipse cx="20" cy="22" rx="6" ry="7" fill="#d97706" opacity="0.8"/>
-                <path d="M14 28 L16 35 L24 35 L26 28 Z" fill="#d97706" opacity="0.7"/>
-                <path d="M19 28 L18 35 L22 35 L21 28 Z" fill="#92400e" opacity="0.9"/>
-              </svg>
-            </div>
-            
-            <h1 className="text-5xl font-bold tracking-wider mb-2" style={{
-              background: 'linear-gradient(180deg, #fbbf24 0%, #d97706 50%, #92400e 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 0 40px rgba(251, 191, 36, 0.5)',
-              fontFamily: 'Georgia, serif',
-              letterSpacing: '0.1em'
-            }}>
-              HELP IT
-            </h1>
-            <p className="text-xl italic" style={{
-              color: '#fbbf24',
-              fontFamily: 'cursive',
-              textShadow: '0 0 10px rgba(251, 191, 36, 0.5)'
-            }}>
-              Just Call the <span style={{fontWeight: 'bold', fontSize: '1.3em'}}>HIT Man</span>.
-            </p>
-            <p className="text-sm mt-1" style={{
-              color: '#d97706',
-              fontStyle: 'italic'
-            }}>
-              We'll take care of it.
-            </p>
-          </div>
+          <img 
+            src="/hit-man-bg.jpg" 
+            alt="Help IT - Just Call the HIT Man" 
+            style={{
+              maxWidth: '600px',
+              width: '100%',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       </header>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Chat Section - Made Wider */}
           <div className="lg:col-span-2">
             <div className="rounded-2xl shadow-2xl flex flex-col" style={{
               height: 'calc(100vh - 200px)',
@@ -265,6 +278,14 @@ export default function HelpIT() {
                       wordWrap: 'break-word',
                       overflowWrap: 'break-word'
                     }}>
+                      {msg.image && (
+                        <img 
+                          src={`data:${msg.image.type};base64,${msg.image.data}`}
+                          alt="Uploaded"
+                          className="rounded-lg mb-2 max-w-full"
+                          style={{maxHeight: '300px', objectFit: 'contain'}}
+                        />
+                      )}
                       <p className="text-base leading-relaxed whitespace-pre-wrap" style={{wordBreak: 'break-word'}}>{msg.content}</p>
                     </div>
                   </div>
@@ -281,12 +302,11 @@ export default function HelpIT() {
                       background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(0, 0, 0, 0.6) 100%)',
                       border: '1px solid rgba(217, 119, 6, 0.4)'
                     }}>
-                      <p className="text-base" style={{color: '#fbbf24'}}>Working on it...</p>
+                      <p className="text-base" style={{color: '#fbbf24'}}>Analyzing...</p>
                     </div>
                   </div>
                 )}
 
-                {/* Smart Email Prompt */}
                 {showEmailPrompt && (
                   <div className="rounded-2xl p-6 shadow-2xl border-2" style={{
                     background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%)',
@@ -336,7 +356,6 @@ export default function HelpIT() {
                 background: 'rgba(0, 0, 0, 0.6)',
                 borderTop: '2px solid rgba(217, 119, 6, 0.3)'
               }}>
-                {/* Optional Email Field */}
                 <div className="mb-3 flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -366,7 +385,47 @@ export default function HelpIT() {
                   />
                 )}
 
+                {imagePreview && (
+                  <div className="mb-3 relative inline-block">
+                    <img 
+                      src={imagePreview} 
+                      alt="Preview" 
+                      className="rounded-lg"
+                      style={{maxHeight: '150px', maxWidth: '100%'}}
+                    />
+                    <button
+                      onClick={clearImage}
+                      className="absolute top-2 right-2 rounded-full p-1"
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        color: '#fbbf24'
+                      }}
+                    >
+                      <XCircle size={20} />
+                    </button>
+                  </div>
+                )}
+
                 <div className="flex gap-2 mb-3">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageSelect}
+                    accept="image/*"
+                    style={{display: 'none'}}
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-3 rounded-xl font-bold transition-all flex items-center gap-2"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.3) 100%)',
+                      border: '2px solid rgba(217, 119, 6, 0.5)',
+                      color: '#fbbf24'
+                    }}
+                    disabled={loading}
+                  >
+                    <ImageIcon size={20} />
+                  </button>
                   <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
@@ -384,24 +443,23 @@ export default function HelpIT() {
                   />
                   <button
                     onClick={handleSend}
-                    disabled={loading || !input.trim()}
+                    disabled={loading || (!input.trim() && !selectedImage)}
                     className="px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2"
                     style={{
-                      background: loading || !input.trim() 
+                      background: loading || (!input.trim() && !selectedImage)
                         ? 'rgba(120, 113, 108, 0.5)'
                         : 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
                       color: '#000',
-                      boxShadow: loading || !input.trim()
+                      boxShadow: loading || (!input.trim() && !selectedImage)
                         ? 'none'
                         : '0 0 20px rgba(251, 191, 36, 0.4)',
-                      cursor: loading || !input.trim() ? 'not-allowed' : 'pointer'
+                      cursor: loading || (!input.trim() && !selectedImage) ? 'not-allowed' : 'pointer'
                     }}
                   >
                     <Send size={20} />
                   </button>
                 </div>
 
-                {/* Get Help Button at Bottom */}
                 <button
                   onClick={() => setShowTicket(!showTicket)}
                   className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold transition-all shadow-lg"
@@ -419,7 +477,6 @@ export default function HelpIT() {
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="lg:col-span-1">
             {showTicket ? (
               <div className="rounded-2xl shadow-2xl p-6" style={{
@@ -575,14 +632,16 @@ export default function HelpIT() {
                 }}>
                   <h3 className="font-bold text-lg mb-2" style={{color: '#fbbf24'}}>We're Here For You</h3>
                   <p className="text-sm leading-relaxed" style={{color: '#d97706'}}>
-                    No question is too simple. No problem is too small. We treat everyone like family and explain everything in plain English.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+                    No question is too simple. No problem is too small. We treat everyone like family and explain everything in plain English
+
+.
+</p>
+</div>
+</div>
+)}
+</div>
+</div>
+</div>
+</div>
+);
 }
