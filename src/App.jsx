@@ -360,7 +360,7 @@ export default function HelpIT() {
                     className="w-4 h-4"
                   />
                   <label htmlFor="emailUpdates" className="text-sm" style={{color: '#fbbf24'}}>
-                    Email me if you find a solution (optional)
+                    Need follow-up help? Submit your email.
                   </label>
                 </div>
                 {optionalEmail !== null && (
