@@ -82,7 +82,7 @@ export default function SetupHubPage() {
             </div>
 
             <a
-              href="https://hostinger.com?REFERRALCODE=YOURCODE"
+              href="https://hostinger.com?REFERRALCODE=FOCGVIDSTQPB"
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full py-4 rounded-lg font-bold text-lg text-center transition-all"
@@ -147,7 +147,7 @@ export default function SetupHubPage() {
             </div>
 
             <a
-              href="https://www.paypal.com/ncp/payment/YOURSETUPLINK"
+              href="https://www.paypal.com/ncp/payment/D5V2KGGLYGH3A"
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full py-4 rounded-lg font-bold text-lg text-center transition-all"
