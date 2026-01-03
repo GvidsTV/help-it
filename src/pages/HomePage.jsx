@@ -8,7 +8,6 @@ export default function HomePage() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showTicket, setShowTicket] = useState(false);
-  const [showEmailPrompt, setShowEmailPrompt] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
   const [optionalEmail, setOptionalEmail] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -27,11 +26,6 @@ export default function HomePage() {
   }, [messages]);
 
   useEffect(() => {
-    if (messages.length >= 7 && !showEmailPrompt && !optionalEmail) {
-      setShowEmailPrompt(true);
-    }
-  }, [messages]);
-
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -307,47 +301,6 @@ export default function HomePage() {
                   </div>
                 )}
 
-                {showEmailPrompt && (
-                  <div className="rounded-2xl p-6 shadow-2xl border-2" style={{
-                    background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%)',
-                    borderColor: 'rgba(251, 191, 36, 0.6)'
-                  }}>
-                    <h3 className="font-bold text-lg mb-2" style={{color: '#fbbf24'}}>💼 The HIT Man here...</h3>
-                    <p className="text-sm mb-4" style={{color: '#f5f5f4'}}>
-                      If you need me to handle this personally, submit a ticket and I'll take care of it.
-                    </p>
-                    <div className="mb-4 text-sm" style={{color: '#d97706'}}>
-                      <p className="mb-1">✓ Email updates on your issue</p>
-                      <p className="mb-1">✓ Direct line to support</p>
-                      <p>✓ Track your ticket status</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setShowEmailPrompt(false);
-                          setShowTicket(true);
-                        }}
-                        className="flex-1 px-4 py-3 rounded-lg font-bold transition-all"
-                        style={{
-                          background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
-                          color: '#000'
-                        }}
-                      >
-                        Submit Ticket
-                      </button>
-                      <button
-                        onClick={() => setShowEmailPrompt(false)}
-                        className="px-4 py-3 rounded-lg transition-all"
-                        style={{
-                          background: 'rgba(120, 113, 108, 0.3)',
-                          color: '#d97706'
-                        }}
-                      >
-                        Continue
-                      </button>
-                    </div>
-                  </div>
-                )}
 
                 <div ref={messagesEndRef} />
               </div>
