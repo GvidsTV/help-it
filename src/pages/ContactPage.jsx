@@ -1,4 +1,4 @@
-import React, { useState } from ‘react’;
+import React, { useState, useEffect } from ‘react’;
 import { Mail, Phone, MessageSquare, Send, CheckCircle } from ‘lucide-react’;
 
 export default function ContactPage() {
@@ -11,16 +11,13 @@ message: ‘’
 });
 const [submitted, setSubmitted] = useState(false);
 
-const handleSubmit = (e) => {
-// DON’T prevent default - let Netlify handle the submission
-// e.preventDefault(); // REMOVED THIS LINE
-
-```
-// Show success message
+// Check if form was just submitted (success parameter in URL)
+useEffect(() => {
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get(‘success’) === ‘true’) {
 setSubmitted(true);
-```
-
-};
+}
+}, []);
 
 const handleChange = (e) => {
 setFormData({
@@ -211,9 +208,9 @@ background: ‘radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)’
             <form 
               name="contact" 
               method="POST" 
+              action="/contact?success=true"
               data-netlify="true"
               data-netlify-honeypot="bot-field"
-              onSubmit={handleSubmit}
             >
               {/* Hidden fields for Netlify */}
               <input type="hidden" name="form-name" value="contact" />
@@ -393,4 +390,3 @@ background: ‘radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)’
 
 );
 }
-
