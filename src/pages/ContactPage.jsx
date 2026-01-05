@@ -82,7 +82,7 @@ export default function ContactPage() {
 
             {/* Text Option */}
             <a
-              href="sms:3214569810"
+              href="sms:4075041287"
               className="block p-6 rounded-xl mb-6 transition-all hover:transform hover:scale-105"
               style={{
                 background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.2) 100%)',
