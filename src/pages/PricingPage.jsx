@@ -17,7 +17,7 @@ export default function PricingPage() {
         'Execution requires payment'
       ],
       cta: 'Text "HIT" to Start',
-      link: 'sms:3214569810',
+      link: 'sms:4075041287',
       featured: false,
       icon: Users,
       note: 'Diagnosis only - no execution without payment'
