@@ -149,7 +149,7 @@ export default function PricingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-base" style={{color: '#d97706'}}>
             <span>Questions?</span>
-            <a href="sms:3214569810" style={{color: '#fbbf24', textDecoration: 'underline'}}>
+            <a href="sms:4075041287" style={{color: '#fbbf24', textDecoration: 'underline'}}>
               Text 407-504-1287
             </a>
             <span>or</span>
@@ -331,7 +331,7 @@ export default function PricingPage() {
           </div>
 
           <p className="text-center mt-8 text-sm" style={{color: '#999'}}>
-            After payment, text <a href="sms:3214569810" style={{color: '#fbbf24'}}>407-504-1287</a> with your receipt
+            After payment, text <a href="sms:4075041287" style={{color: '#fbbf24'}}>407-504-1287</a> with your receipt
           </p>
         </div>
 
@@ -402,11 +402,11 @@ export default function PricingPage() {
             Ready to Join The Family?
           </h2>
           <p className="text-xl mb-8" style={{color: '#f5f5f4'}}>
-            Text "HIT" to <a href="sms:3214569810" style={{color: '#fbbf24', textDecoration: 'underline', fontWeight: 'bold'}}>407-504-1287</a> to get started
+            Text "HIT" to <a href="sms:4075041287" style={{color: '#fbbf24', textDecoration: 'underline', fontWeight: 'bold'}}>407-504-1287</a> to get started
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="sms:3214569810"
+              href="sms:4075041287"
               className="px-10 py-4 rounded-lg font-bold text-lg transition-all"
               style={{
                 background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
