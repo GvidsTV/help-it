@@ -4,7 +4,7 @@ import { Mail, MessageSquare, Clock, Zap } from 'lucide-react';
 export default function ContactPage() {
 return (
 <div className=“min-h-screen” style={{
-background: ‘radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)’
+background: 'radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)’
 }}>
 <div style={{
 position: ‘fixed’,
@@ -12,7 +12,7 @@ top: ‘-50%’,
 left: ‘-50%’,
 width: ‘200%’,
 height: ‘200%’,
-background: ‘radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)’,
+background: 'radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)’,
 pointerEvents: ‘none’,
 zIndex: 0
 }} />
