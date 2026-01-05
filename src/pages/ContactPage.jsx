@@ -1,70 +1,29 @@
-import React, { useState, useEffect } from ‘react’;
-import { Mail, Phone, MessageSquare, Send, CheckCircle } from ‘lucide-react’;
+import React from ‘react’;
+import { Mail, MessageSquare, Clock, Zap } from ‘lucide-react’;
 
 export default function ContactPage() {
-const [formData, setFormData] = useState({
-name: ‘’,
-email: ‘’,
-phone: ‘’,
-category: ‘’,
-message: ‘’
-});
-const [submitted, setSubmitted] = useState(false);
-
-// Check if form was just submitted (success parameter in URL)
-useEffect(() => {
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get(‘success’) === ‘true’) {
-setSubmitted(true);
-}
-}, []);
-
-const handleChange = (e) => {
-setFormData({
-…formData,
-[e.target.name]: e.target.value
-});
-};
-
 return (
 <div className=“min-h-screen” style={{
 background: ‘radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)’
 }}>
-{/* Hidden form for Netlify detection - DO NOT REMOVE THIS */}
-<form name="contact" netlify netlify-honeypot="bot-field" hidden>
-<input type="text" name="name" />
-<input type="email" name="email" />
-<input type="tel" name="phone" />
-<select name="category">
-<option value="">Select a category</option>
-<option value="website-email">Website/Email Issue</option>
-<option value="automation">Automation/Integration</option>
-<option value="emergency">Emergency Support Needed</option>
-<option value="general">General Inquiry</option>
-<option value="setup">Setup Hub Question</option>
-<option value="billing">Billing/Membership</option>
-</select>
-<textarea name="message"></textarea>
-</form>
+{/* Background Effect */}
+<div style={{
+position: ‘fixed’,
+top: ‘-50%’,
+left: ‘-50%’,
+width: ‘200%’,
+height: ‘200%’,
+background: ‘radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)’,
+pointerEvents: ‘none’,
+zIndex: 0
+}} />
 
 ```
-  {/* Background Effect */}
-  <div style={{
-    position: 'fixed',
-    top: '-50%',
-    left: '-50%',
-    width: '200%',
-    height: '200%',
-    background: 'radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)',
-    pointerEvents: 'none',
-    zIndex: 0
-  }} />
-
   <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
     
     {/* Header */}
     <div className="text-center mb-16">
-      <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{
+      <h1 className="text-5xl md:text-7xl font-bold mb-6" style={{
         background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
@@ -73,315 +32,213 @@ background: ‘radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)’
         Contact The HIT Man
       </h1>
       
-      <p className="text-xl max-w-3xl mx-auto mb-8" style={{color: '#f5f5f4'}}>
-        Prefer a form? We've got you. For faster response, text or email us directly.
+      <p className="text-2xl max-w-3xl mx-auto mb-4" style={{color: '#f5f5f4'}}>
+        We're here to help. Reach out directly.
       </p>
     </div>
 
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+    {/* Primary Contact Methods */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
       
-      {/* Contact Methods */}
-      <div>
-        <h2 className="text-3xl font-bold mb-8" style={{color: '#fbbf24'}}>
-          Get Help Now
-        </h2>
-
-        {/* Text Option */}
-        <a
-          href="sms:4075041287"
-          className="block p-6 rounded-xl mb-6 transition-all hover:transform hover:scale-105"
-          style={{
-            background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.2) 100%)',
-            border: '2px solid rgba(251, 191, 36, 0.5)',
-            boxShadow: '0 0 30px rgba(251, 191, 36, 0.3)',
-            textDecoration: 'none'
-          }}
-        >
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-lg" style={{
-              background: 'rgba(251, 191, 36, 0.2)',
-              border: '2px solid rgba(251, 191, 36, 0.4)'
-            }}>
-              <Phone size={28} style={{color: '#fbbf24'}} />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-bold mb-2" style={{color: '#fbbf24'}}>
-                Text "HIT" (Fastest)
-              </h3>
-              <p className="text-base mb-2" style={{color: '#f5f5f4'}}>
-                Get immediate diagnosis and response
-              </p>
-              <p className="text-2xl font-bold" style={{color: '#fbbf24'}}>
-                407-504-1287
-              </p>
-            </div>
-          </div>
-        </a>
-
-        {/* Email Option */}
-        <a
-          href="mailto:support@helpitapp.com"
-          className="block p-6 rounded-xl mb-6 transition-all hover:transform hover:scale-105"
-          style={{
-            background: 'rgba(0, 0, 0, 0.7)',
-            border: '2px solid rgba(217, 119, 6, 0.4)',
-            boxShadow: '0 0 20px rgba(217, 119, 6, 0.2)',
-            textDecoration: 'none'
-          }}
-        >
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-lg" style={{
-              background: 'rgba(217, 119, 6, 0.2)',
-              border: '2px solid rgba(217, 119, 6, 0.4)'
-            }}>
-              <Mail size={28} style={{color: '#d97706'}} />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-bold mb-2" style={{color: '#fbbf24'}}>
-                Email Us
-              </h3>
-              <p className="text-base mb-2" style={{color: '#f5f5f4'}}>
-                For less urgent inquiries
-              </p>
-              <p className="text-lg font-semibold" style={{color: '#fbbf24'}}>
-                support@helpitapp.com
-              </p>
-            </div>
-          </div>
-        </a>
-
-        {/* Response Times */}
-        <div className="p-6 rounded-xl" style={{
-          background: 'rgba(0, 0, 0, 0.5)',
-          border: '2px solid rgba(217, 119, 6, 0.3)'
-        }}>
-          <h3 className="text-lg font-bold mb-4" style={{color: '#fbbf24'}}>
-            Response Times
-          </h3>
-          <ul className="space-y-3">
-            <li className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full" style={{background: '#fbbf24'}} />
-              <span style={{color: '#f5f5f4'}}>
-                <strong style={{color: '#fbbf24'}}>Text:</strong> Within minutes
-              </span>
-            </li>
-            <li className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full" style={{background: '#d97706'}} />
-              <span style={{color: '#f5f5f4'}}>
-                <strong style={{color: '#fbbf24'}}>Email:</strong> Within 24 hours
-              </span>
-            </li>
-            <li className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full" style={{background: '#92400e'}} />
-              <span style={{color: '#f5f5f4'}}>
-                <strong style={{color: '#fbbf24'}}>Form:</strong> Within 48 hours
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Contact Form */}
-      <div>
-        <div className="p-8 rounded-xl" style={{
-          background: 'rgba(0, 0, 0, 0.7)',
-          border: '2px solid rgba(217, 119, 6, 0.4)',
-          boxShadow: '0 0 40px rgba(217, 119, 6, 0.2)'
-        }}>
-          {submitted ? (
-            <div className="text-center py-12">
-              <CheckCircle size={64} style={{color: '#fbbf24', margin: '0 auto 1rem'}} />
-              <h3 className="text-2xl font-bold mb-4" style={{color: '#fbbf24'}}>
-                Message Sent!
-              </h3>
-              <p className="text-base mb-6" style={{color: '#f5f5f4'}}>
-                We'll get back to you within 48 hours.
-              </p>
-              <p className="text-sm" style={{color: '#d97706'}}>
-                Need faster help?{' '}
-                <a href="sms:4075041287" style={{color: '#fbbf24', textDecoration: 'underline'}}>
-                  Text us now
-                </a>
-              </p>
-            </div>
-          ) : (
-            <form 
-              name="contact" 
-              method="POST" 
-              action="/contact?success=true"
-              data-netlify="true"
-              data-netlify-honeypot="bot-field"
-            >
-              {/* Hidden fields for Netlify */}
-              <input type="hidden" name="form-name" value="contact" />
-              <input type="hidden" name="bot-field" />
-              
-              <h2 className="text-2xl font-bold mb-6" style={{color: '#fbbf24'}}>
-                Send Us a Message
-              </h2>
-
-              {/* Name */}
-              <div className="mb-4">
-                <label className="block text-sm font-semibold mb-2" style={{color: '#fbbf24'}}>
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg text-base focus:outline-none"
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: '2px solid rgba(217, 119, 6, 0.4)',
-                    color: '#f5f5f4'
-                  }}
-                  placeholder="Your name"
-                />
-              </div>
-
-              {/* Email */}
-              <div className="mb-4">
-                <label className="block text-sm font-semibold mb-2" style={{color: '#fbbf24'}}>
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg text-base focus:outline-none"
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: '2px solid rgba(217, 119, 6, 0.4)',
-                    color: '#f5f5f4'
-                  }}
-                  placeholder="your.email@example.com"
-                />
-              </div>
-
-              {/* Phone */}
-              <div className="mb-4">
-                <label className="block text-sm font-semibold mb-2" style={{color: '#fbbf24'}}>
-                  Phone (optional)
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg text-base focus:outline-none"
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: '2px solid rgba(217, 119, 6, 0.4)',
-                    color: '#f5f5f4'
-                  }}
-                  placeholder="(555) 123-4567"
-                />
-              </div>
-
-              {/* Category */}
-              <div className="mb-4">
-                <label className="block text-sm font-semibold mb-2" style={{color: '#fbbf24'}}>
-                  Issue Category *
-                </label>
-                <select
-                  name="category"
-                  required
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg text-base focus:outline-none"
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: '2px solid rgba(217, 119, 6, 0.4)',
-                    color: '#f5f5f4'
-                  }}
-                >
-                  <option value="">Select a category</option>
-                  <option value="website-email">Website/Email Issue</option>
-                  <option value="automation">Automation/Integration</option>
-                  <option value="emergency">Emergency Support Needed</option>
-                  <option value="general">General Inquiry</option>
-                  <option value="setup">Setup Hub Question</option>
-                  <option value="billing">Billing/Membership</option>
-                </select>
-              </div>
-
-              {/* Message */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold mb-2" style={{color: '#fbbf24'}}>
-                  Message *
-                </label>
-                <textarea
-                  name="message"
-                  required
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows="6"
-                  className="w-full px-4 py-3 rounded-lg text-base focus:outline-none resize-none"
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: '2px solid rgba(217, 119, 6, 0.4)',
-                    color: '#f5f5f4'
-                  }}
-                  placeholder="Describe your issue or question..."
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className="w-full py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-2"
-                style={{
-                  background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
-                  color: '#000',
-                  boxShadow: '0 0 30px rgba(251, 191, 36, 0.4)',
-                  border: '2px solid #fbbf24'
-                }}
-              >
-                <Send size={20} />
-                Send to HIT Man
-              </button>
-
-              <p className="text-xs text-center mt-4" style={{color: '#999'}}>
-                Need faster help?{' '}
-                <a href="sms:4075041287" style={{color: '#fbbf24'}}>
-                  Text 407-504-1287
-                </a>
-              </p>
-            </form>
-          )}
-        </div>
-      </div>
-
-    </div>
-
-    {/* Bottom CTA */}
-    <div className="mt-16 text-center p-8 rounded-xl" style={{
-      background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(146, 64, 14, 0.1) 100%)',
-      border: '2px solid rgba(251, 191, 36, 0.3)'
-    }}>
-      <h3 className="text-2xl font-bold mb-3" style={{color: '#fbbf24'}}>
-        IT Problem Right Now?
-      </h3>
-      <p className="text-lg mb-6" style={{color: '#f5f5f4'}}>
-        Don't wait for a form response. Get immediate diagnosis.
-      </p>
+      {/* Text - Primary */}
       <a
-        href="sms:4075041287"
-        className="inline-block px-8 py-3 rounded-lg font-bold text-base transition-all"
+        href="sms:4075041287&body=HIT"
+        className="block p-10 rounded-2xl transition-all hover:transform hover:scale-105"
         style={{
-          background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
-          color: '#000',
-          boxShadow: '0 0 30px rgba(251, 191, 36, 0.4)',
-          border: '2px solid #fbbf24',
+          background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.4) 0%, rgba(217, 119, 6, 0.3) 100%)',
+          border: '3px solid rgba(251, 191, 36, 0.6)',
+          boxShadow: '0 0 50px rgba(251, 191, 36, 0.5)',
           textDecoration: 'none'
         }}
       >
-        Text "HIT" to 407-504-1287
+        <div className="text-center">
+          <div className="inline-block p-5 rounded-full mb-6" style={{
+            background: 'rgba(251, 191, 36, 0.3)',
+            border: '3px solid rgba(251, 191, 36, 0.5)'
+          }}>
+            <MessageSquare size={48} style={{color: '#fbbf24'}} />
+          </div>
+          
+          <div className="mb-4">
+            <div className="inline-block px-4 py-2 rounded-full mb-3" style={{
+              background: 'rgba(251, 191, 36, 0.2)',
+              border: '2px solid rgba(251, 191, 36, 0.4)'
+            }}>
+              <div className="flex items-center gap-2">
+                <Zap size={16} style={{color: '#fbbf24'}} />
+                <span className="text-sm font-bold" style={{color: '#fbbf24'}}>
+                  FASTEST RESPONSE
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <h2 className="text-3xl font-bold mb-4" style={{color: '#fbbf24'}}>
+            Text Us
+          </h2>
+          
+          <p className="text-5xl font-bold mb-6" style={{color: '#fbbf24'}}>
+            407-504-1287
+          </p>
+          
+          <p className="text-lg mb-4" style={{color: '#f5f5f4'}}>
+            Text <strong style={{color: '#fbbf24'}}>"HIT"</strong> and we'll take care of IT
+          </p>
+
+          <div className="flex items-center justify-center gap-2">
+            <Clock size={20} style={{color: '#fbbf24'}} />
+            <span className="text-base font-semibold" style={{color: '#fbbf24'}}>
+              Response within minutes
+            </span>
+          </div>
+        </div>
       </a>
+
+      {/* Email - Secondary */}
+      <a
+        href="mailto:support@helpitapp.com"
+        className="block p-10 rounded-2xl transition-all hover:transform hover:scale-105"
+        style={{
+          background: 'rgba(0, 0, 0, 0.7)',
+          border: '3px solid rgba(217, 119, 6, 0.5)',
+          boxShadow: '0 0 30px rgba(217, 119, 6, 0.3)',
+          textDecoration: 'none'
+        }}
+      >
+        <div className="text-center">
+          <div className="inline-block p-5 rounded-full mb-6" style={{
+            background: 'rgba(217, 119, 6, 0.2)',
+            border: '3px solid rgba(217, 119, 6, 0.4)'
+          }}>
+            <Mail size={48} style={{color: '#d97706'}} />
+          </div>
+
+          <h2 className="text-3xl font-bold mb-4" style={{color: '#fbbf24'}}>
+            Email Us
+          </h2>
+          
+          <p className="text-2xl font-bold mb-6" style={{color: '#fbbf24'}}>
+            support@helpitapp.com
+          </p>
+          
+          <p className="text-lg mb-6" style={{color: '#f5f5f4'}}>
+            For detailed inquiries or attachments
+          </p>
+
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <Clock size={20} style={{color: '#d97706'}} />
+            <span className="text-base font-semibold" style={{color: '#d97706'}}>
+              Response within 24 hours
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm" style={{color: '#999'}}>
+              ✅ Screenshots welcome
+            </p>
+            <p className="text-sm" style={{color: '#999'}}>
+              ✅ Technical details
+            </p>
+            <p className="text-sm" style={{color: '#999'}}>
+              ✅ Complex issues
+            </p>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    {/* Response Time Breakdown */}
+    <div className="max-w-3xl mx-auto mb-16 p-8 rounded-xl" style={{
+      background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(146, 64, 14, 0.1) 100%)',
+      border: '2px solid rgba(251, 191, 36, 0.4)'
+    }}>
+      <h3 className="text-2xl font-bold mb-6 text-center" style={{color: '#fbbf24'}}>
+        Response Times
+      </h3>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-4 rounded-lg" style={{
+          background: 'rgba(0, 0, 0, 0.4)',
+          border: '1px solid rgba(251, 191, 36, 0.3)'
+        }}>
+          <div className="flex items-center gap-3">
+            <MessageSquare size={24} style={{color: '#fbbf24'}} />
+            <span className="font-semibold" style={{color: '#f5f5f4'}}>Text Message</span>
+          </div>
+          <span className="font-bold text-lg" style={{color: '#fbbf24'}}>Within minutes</span>
+        </div>
+        
+        <div className="flex items-center justify-between p-4 rounded-lg" style={{
+          background: 'rgba(0, 0, 0, 0.4)',
+          border: '1px solid rgba(146, 64, 14, 0.3)'
+        }}>
+          <div className="flex items-center gap-3">
+            <Mail size={24} style={{color: '#92400e'}} />
+            <span className="font-semibold" style={{color: '#f5f5f4'}}>Email</span>
+          </div>
+          <span className="font-bold text-lg" style={{color: '#92400e'}}>Within 24 hours</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Business Hours */}
+    <div className="max-w-2xl mx-auto mb-16 p-8 rounded-xl text-center" style={{
+      background: 'rgba(0, 0, 0, 0.7)',
+      border: '2px solid rgba(217, 119, 6, 0.3)'
+    }}>
+      <h3 className="text-2xl font-bold mb-6" style={{color: '#fbbf24'}}>
+        Business Hours
+      </h3>
+      <div className="space-y-2 mb-6">
+        <p className="text-lg" style={{color: '#f5f5f4'}}>
+          <strong style={{color: '#fbbf24'}}>Monday - Friday:</strong> 8am - 8pm EST
+        </p>
+        <p className="text-lg" style={{color: '#f5f5f4'}}>
+          <strong style={{color: '#fbbf24'}}>Saturday - Sunday:</strong> 10am - 6pm EST
+        </p>
+      </div>
+      <div className="p-4 rounded-lg" style={{
+        background: 'rgba(217, 119, 6, 0.2)',
+        border: '2px solid rgba(251, 191, 36, 0.4)'
+      }}>
+        <p className="text-xl font-bold" style={{color: '#fbbf24'}}>
+          🚨 Emergency Support: 24/7
+        </p>
+        <p className="text-sm mt-2" style={{color: '#f5f5f4'}}>
+          Critical issues? We're always available.
+        </p>
+      </div>
+    </div>
+
+    {/* Bottom CTA */}
+    <div className="text-center p-12 rounded-2xl" style={{
+      background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.2) 100%)',
+      border: '3px solid rgba(251, 191, 36, 0.5)',
+      boxShadow: '0 0 50px rgba(251, 191, 36, 0.3)'
+    }}>
+      <div className="text-6xl mb-4">🎯</div>
+      <h3 className="text-3xl font-bold mb-4" style={{color: '#fbbf24'}}>
+        Got an IT Problem?
+      </h3>
+      <p className="text-xl mb-8" style={{color: '#f5f5f4'}}>
+        The HIT Man is standing by.
+      </p>
+      <a
+        href="sms:4075041287&body=HIT"
+        className="inline-block px-10 py-4 rounded-lg font-bold text-xl transition-all hover:transform hover:scale-105"
+        style={{
+          background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
+          color: '#000',
+          boxShadow: '0 0 40px rgba(251, 191, 36, 0.5)',
+          border: '3px solid #fbbf24',
+          textDecoration: 'none'
+        }}
+      >
+        💬 Text "HIT" Now
+      </a>
+      <p className="text-sm mt-6" style={{color: '#d97706'}}>
+        407-504-1287 • support@helpitapp.com
+      </p>
     </div>
 
   </div>
