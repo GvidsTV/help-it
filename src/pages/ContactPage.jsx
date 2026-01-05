@@ -1,5 +1,5 @@
-import React from ‘react’;
-import { Mail, MessageSquare, Clock, Zap } from ‘lucide-react’;
+import React from 'react'; 
+import { Mail, MessageSquare, Clock, Zap } from 'lucide-react';
 
 export default function ContactPage() {
 return (
