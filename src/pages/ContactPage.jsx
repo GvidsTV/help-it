@@ -6,7 +6,6 @@ return (
 <div className=“min-h-screen” style={{
 background: ‘radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)’
 }}>
-{/* Background Effect */}
 <div style={{
 position: ‘fixed’,
 top: ‘-50%’,
@@ -21,7 +20,6 @@ zIndex: 0
 ```
   <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
     
-    {/* Header */}
     <div className="text-center mb-16">
       <h1 className="text-5xl md:text-7xl font-bold mb-6" style={{
         background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
@@ -37,10 +35,8 @@ zIndex: 0
       </p>
     </div>
 
-    {/* Primary Contact Methods */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
       
-      {/* Text - Primary */}
       <a
         href="sms:4075041287&body=HIT"
         className="block p-10 rounded-2xl transition-all hover:transform hover:scale-105"
@@ -82,7 +78,7 @@ zIndex: 0
           </p>
           
           <p className="text-lg mb-4" style={{color: '#f5f5f4'}}>
-            Text <strong style={{color: '#fbbf24'}}>"HIT"</strong> and we'll take care of IT
+            Text <strong style={{color: '#fbbf24'}}>HIT</strong> and we'll take care of IT
           </p>
 
           <div className="flex items-center justify-center gap-2">
@@ -94,7 +90,6 @@ zIndex: 0
         </div>
       </a>
 
-      {/* Email - Secondary */}
       <a
         href="mailto:support@helpitapp.com"
         className="block p-10 rounded-2xl transition-all hover:transform hover:scale-105"
@@ -134,13 +129,13 @@ zIndex: 0
 
           <div className="space-y-2">
             <p className="text-sm" style={{color: '#999'}}>
-              ✅ Screenshots welcome
+              Screenshots welcome
             </p>
             <p className="text-sm" style={{color: '#999'}}>
-              ✅ Technical details
+              Technical details
             </p>
             <p className="text-sm" style={{color: '#999'}}>
-              ✅ Complex issues
+              Complex issues
             </p>
           </div>
         </div>
@@ -148,7 +143,6 @@ zIndex: 0
 
     </div>
 
-    {/* Response Time Breakdown */}
     <div className="max-w-3xl mx-auto mb-16 p-8 rounded-xl" style={{
       background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(146, 64, 14, 0.1) 100%)',
       border: '2px solid rgba(251, 191, 36, 0.4)'
@@ -181,7 +175,6 @@ zIndex: 0
       </div>
     </div>
 
-    {/* Business Hours */}
     <div className="max-w-2xl mx-auto mb-16 p-8 rounded-xl text-center" style={{
       background: 'rgba(0, 0, 0, 0.7)',
       border: '2px solid rgba(217, 119, 6, 0.3)'
@@ -202,7 +195,7 @@ zIndex: 0
         border: '2px solid rgba(251, 191, 36, 0.4)'
       }}>
         <p className="text-xl font-bold" style={{color: '#fbbf24'}}>
-          🚨 Emergency Support: 24/7
+          Emergency Support: 24/7
         </p>
         <p className="text-sm mt-2" style={{color: '#f5f5f4'}}>
           Critical issues? We're always available.
@@ -210,7 +203,6 @@ zIndex: 0
       </div>
     </div>
 
-    {/* Bottom CTA */}
     <div className="text-center p-12 rounded-2xl" style={{
       background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.2) 100%)',
       border: '3px solid rgba(251, 191, 36, 0.5)',
@@ -234,7 +226,7 @@ zIndex: 0
           textDecoration: 'none'
         }}
       >
-        💬 Text "HIT" Now
+        Text HIT Now
       </a>
       <p className="text-sm mt-6" style={{color: '#d97706'}}>
         407-504-1287 • support@helpitapp.com
