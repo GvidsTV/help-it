@@ -150,7 +150,7 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-base" style={{color: '#d97706'}}>
             <span>Questions?</span>
             <a href="sms:3214569810" style={{color: '#fbbf24', textDecoration: 'underline'}}>
-              Text 321-456-9810
+              Text 407-504-1287
             </a>
             <span>or</span>
             <a href="mailto:support@helpitapp.com" style={{color: '#fbbf24', textDecoration: 'underline'}}>
@@ -331,7 +331,7 @@ export default function PricingPage() {
           </div>
 
           <p className="text-center mt-8 text-sm" style={{color: '#999'}}>
-            After payment, text <a href="sms:3214569810" style={{color: '#fbbf24'}}>321-456-9810</a> with your receipt
+            After payment, text <a href="sms:3214569810" style={{color: '#fbbf24'}}>407-504-1287</a> with your receipt
           </p>
         </div>
 
@@ -354,7 +354,7 @@ export default function PricingPage() {
               {
                 num: '2',
                 title: 'Text "HIT"',
-                desc: 'Text the word "HIT" to 321-456-9810 or email support@helpitapp.com'
+                desc: 'Text the word "HIT" to 407-504-1287 or email support@helpitapp.com'
               },
               {
                 num: '3',
@@ -402,7 +402,7 @@ export default function PricingPage() {
             Ready to Join The Family?
           </h2>
           <p className="text-xl mb-8" style={{color: '#f5f5f4'}}>
-            Text "HIT" to <a href="sms:3214569810" style={{color: '#fbbf24', textDecoration: 'underline', fontWeight: 'bold'}}>321-456-9810</a> to get started
+            Text "HIT" to <a href="sms:3214569810" style={{color: '#fbbf24', textDecoration: 'underline', fontWeight: 'bold'}}>407-504-1287</a> to get started
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
@@ -445,3 +445,4 @@ export default function PricingPage() {
     </div>
   );
 }
+

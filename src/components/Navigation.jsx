@@ -25,7 +25,7 @@ export default function Navigation() {
             <span style={{color: '#f5f5f4'}}>
               Text <strong style={{color: '#fbbf24'}}>"HIT"</strong> to{' '}
               <a href="sms:3214569810" style={{color: '#fbbf24', textDecoration: 'underline', fontWeight: 'bold'}}>
-                321-456-9810
+                407-504-1287
               </a>
               {' '}or email{' '}
               <a href="mailto:support@helpitapp.com" style={{color: '#fbbf24', textDecoration: 'underline'}}>
@@ -137,3 +137,4 @@ export default function Navigation() {
     </>
   );
 }
+

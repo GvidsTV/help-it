@@ -106,7 +106,7 @@ export default function ContactPage() {
                     Get immediate diagnosis and response
                   </p>
                   <p className="text-2xl font-bold" style={{color: '#fbbf24'}}>
-                    321-456-9810
+                    407-504-1287
                   </p>
                 </div>
               </div>
@@ -339,7 +339,7 @@ export default function ContactPage() {
                   <p className="text-xs text-center mt-4" style={{color: '#999'}}>
                     Need faster help?{' '}
                     <a href="sms:3214569810" style={{color: '#fbbf24'}}>
-                      Text 321-456-9810
+                      Text 407-504-1287
                     </a>
                   </p>
                 </form>
@@ -371,7 +371,7 @@ export default function ContactPage() {
               textDecoration: 'none'
             }}
           >
-            Text "HIT" to 321-456-9810
+            Text "HIT" to 407-504-1287
           </a>
         </div>
 
@@ -379,3 +379,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

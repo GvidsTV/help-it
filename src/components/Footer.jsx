@@ -29,7 +29,7 @@ export default function Footer() {
                     Text "HIT" to
                   </p>
                   <p className="text-base font-bold" style={{color: '#fbbf24'}}>
-                    321-456-9810
+                    407-504-1287
                   </p>
                 </div>
               </a>
@@ -142,7 +142,7 @@ export default function Footer() {
               © {new Date().getFullYear()} Help IT. All rights reserved.
             </p>
             <p className="text-xs" style={{color: '#78350f'}}>
-              IT problems? Text "HIT" to 321-456-9810
+              IT problems? Text "HIT" to 407-504-1287
             </p>
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function Footer() {
           <p className="text-sm md:text-base" style={{color: '#f5f5f4'}}>
             <strong style={{color: '#fbbf24'}}>IT Problem Right Now?</strong>{' '}
             <a href="sms:3214569810" style={{color: '#fbbf24', textDecoration: 'underline', fontWeight: 'bold'}}>
-              Text "HIT" to 321-456-9810
+              Text "HIT" to 407-504-1287
             </a>
             {' '}for immediate diagnosis.
           </p>
@@ -165,3 +165,4 @@ export default function Footer() {
     </footer>
   );
 }
+

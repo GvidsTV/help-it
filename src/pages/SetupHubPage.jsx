@@ -207,7 +207,7 @@ export default function SetupHubPage() {
                   textDecoration: 'underline'
                 }}
               >
-                321-456-9810
+                407-504-1287
               </a>
             </div>
 
@@ -364,7 +364,7 @@ export default function SetupHubPage() {
                 textDecoration: 'none'
               }}
             >
-              Text 321-456-9810
+              Text 407-504-1287
             </a>
             <a
               href="mailto:support@helpitapp.com"
@@ -385,3 +385,4 @@ export default function SetupHubPage() {
     </div>
   );
 }
+
