@@ -200,7 +200,7 @@ export default function SetupHubPage() {
                 to
               </p>
               <a
-                href="sms:3214569810"
+                href="sms:4075041287"
                 className="inline-block text-3xl font-bold"
                 style={{
                   color: '#fbbf24',
@@ -356,7 +356,7 @@ export default function SetupHubPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="sms:3214569810"
+              href="sms:4075041287"
               className="px-6 py-3 rounded-lg font-semibold text-base"
               style={{
                 background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
