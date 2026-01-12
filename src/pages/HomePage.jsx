@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   Send,
   Ticket,
-  MessageSquare,
-  Loader2,
   User,
   X,
   Mail,
@@ -11,10 +9,8 @@ import {
   XCircle,
 } from "lucide-react";
 
-// Note: Ensure this component exists or remove this line if not used
-// import ChatWidget from "../components/ChatWidget";
-
 export default function HomePage() {
+  // --- State Management ---
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -31,7 +27,7 @@ export default function HomePage() {
   const [wantsEmailUpdates, setWantsEmailUpdates] = useState(false);
   const [optionalEmail, setOptionalEmail] = useState("");
 
-  const [selectedImage, setSelectedImage] = useState(null); 
+  const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
   const [ticketData, setTicketData] = useState({
@@ -45,6 +41,7 @@ export default function HomePage() {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
+  // --- Helpers ---
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -53,18 +50,26 @@ export default function HomePage() {
     scrollToBottom();
   }, [messages]);
 
+  // --- Image Logic ---
   const handleImageSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     if (file.size > 5 * 1024 * 1024) {
       alert("Image too large! Under 5MB only.");
       return;
     }
+
     const reader = new FileReader();
     reader.onloadend = () => {
       const resultStr = String(reader.result || "");
       const base64String = resultStr.includes(",") ? resultStr.split(",")[1] : "";
-      setSelectedImage({ data: base64String, type: file.type, name: file.name });
+      
+      setSelectedImage({ 
+        data: base64String, 
+        type: file.type, 
+        name: file.name 
+      });
       setImagePreview(reader.result);
     };
     reader.readAsDataURL(file);
@@ -76,6 +81,7 @@ export default function HomePage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // --- Core Chat Logic ---
   const handleSend = async () => {
     if ((!input.trim() && !selectedImage) || loading) return;
 
@@ -85,19 +91,22 @@ export default function HomePage() {
       image: selectedImage,
     };
 
-    const nextMessages = [...messages, userMessage];
-    setMessages(nextMessages);
+    // Store current state to send, then clear inputs for UI snappiness
+    const messageToSend = input.trim() || "Please analyze this image";
+    const imageToSend = selectedImage;
+
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     clearImage();
     setLoading(true);
 
     try {
-      // THE CONNECTION: This calls your Netlify Function
       const response = await fetch("/.netlify/functions/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: userMessage.content,
+          message: messageToSend,
+          image: imageToSend, // Now correctly sending the base64 data
           optionalEmail: wantsEmailUpdates ? optionalEmail : undefined,
         }),
       });
@@ -105,11 +114,17 @@ export default function HomePage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data?.error || "Connection lost");
 
-      setMessages((prev) => [...prev, { role: "assistant", content: data?.reply || "I've handled it." }]);
+      setMessages((prev) => [
+        ...prev, 
+        { role: "assistant", content: data?.reply || "I've handled it." }
+      ]);
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "I hit a snag. Submit a ticket and I'll handle this personally." },
+        { 
+          role: "assistant", 
+          content: "I hit a snag. Submit a ticket and I'll handle this personally." 
+        },
       ]);
     } finally {
       setLoading(false);
@@ -123,7 +138,6 @@ export default function HomePage() {
     }
 
     try {
-      // INTEGRATION: This sends the ticket to your Formspree/Email via Netlify
       const response = await fetch("/.netlify/functions/submit-ticket", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -196,6 +210,13 @@ export default function HomePage() {
                    </div>
                    <div className={`max-w-[80%] p-4 rounded-2xl border ${msg.role === 'user' ? 'bg-zinc-800 border-zinc-700' : 'bg-amber-950/30 border-amber-600/30 text-amber-50'}`}>
                       {msg.content}
+                      {msg.image && (
+                        <img 
+                          src={msg.image.data ? `data:${msg.image.type};base64,${msg.image.data}` : msg.image} 
+                          alt="Uploaded" 
+                          className="mt-2 rounded-lg max-h-40 border border-amber-500/30" 
+                        />
+                      )}
                    </div>
                 </div>
               ))}
@@ -205,11 +226,37 @@ export default function HomePage() {
 
             {/* Input Area */}
             <div className="p-4 border-t border-amber-600/30 bg-zinc-900/90">
+              {imagePreview && (
+                <div className="mb-3 relative inline-block">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="rounded-lg border border-amber-500/50"
+                    style={{ maxHeight: "150px", maxWidth: "100%" }}
+                  />
+                  <button
+                    onClick={clearImage}
+                    className="absolute -top-2 -right-2 bg-black rounded-full p-1 border border-amber-500"
+                    type="button"
+                  >
+                    <XCircle size={20} className="text-amber-500" />
+                  </button>
+                </div>
+              )}
+
               <div className="flex gap-2">
                  <input 
-                   type="file" ref={fileInputRef} className="hidden" onChange={handleImageSelect} 
+                   type="file" 
+                   ref={fileInputRef} 
+                   className="hidden" 
+                   accept="image/*"
+                   onChange={handleImageSelect} 
                  />
-                 <button onClick={() => fileInputRef.current.click()} className="p-3 rounded-xl border border-amber-600/40 text-amber-500 hover:bg-amber-600/10">
+                 <button 
+                   onClick={() => fileInputRef.current.click()} 
+                   className="p-3 rounded-xl border border-amber-600/40 text-amber-500 hover:bg-amber-600/10"
+                   type="button"
+                 >
                    <ImageIcon size={20} />
                  </button>
                  <textarea 
@@ -217,9 +264,13 @@ export default function HomePage() {
                    placeholder="Type your problem..."
                    value={input}
                    onChange={(e) => setInput(e.target.value)}
-                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
                  />
-                 <button onClick={handleSend} className="bg-amber-500 text-black px-6 rounded-xl font-bold hover:bg-amber-400">
+                 <button 
+                   onClick={handleSend} 
+                   className="bg-amber-500 text-black px-6 rounded-xl font-bold hover:bg-amber-400 disabled:opacity-50"
+                   disabled={loading}
+                 >
                    <Send size={20} />
                  </button>
               </div>
@@ -227,7 +278,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Info/Ticket Side */}
+        {/* Sidebar */}
         <div className="space-y-6">
           <button 
             onClick={() => setShowTicket(!showTicket)}
