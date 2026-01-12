@@ -260,15 +260,15 @@ export default function HomePage() {
       {/* Hero Banner Section - UPDATED TO USE IMPORT */}
       <div className="relative z-10 py-12 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <img
-            src={heroImage} 
-            alt="HELP IT - Just Call the HIT Man. We'll take care of it."
-            className="w-full max-w-4xl mx-auto rounded-2xl"
-            style={{
-              boxShadow: "0 0 40px rgba(217, 119, 6, 0.3)",
-              border: "2px solid rgba(217, 119, 6, 0.4)",
-            }}
-          />
+         <img
+  src="/hit-man-bg.png" 
+  alt="HELP IT - Just Call the HIT Man. We'll take care of it."
+  className="w-full max-w-4xl mx-auto rounded-2xl"
+  style={{
+    boxShadow: "0 0 40px rgba(217, 119, 6, 0.3)",
+    border: "2px solid rgba(217, 119, 6, 0.4)",
+  }}
+/>
         </div>
       </div>
 
