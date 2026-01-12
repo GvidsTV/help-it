@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 
 import ChatWidget from "../components/ChatWidget";
+// IMPORT THE IMAGE HERE
+// This ensures React bundles it correctly and optimized it
+import heroImage from "../assets/hit-man-bg.png"; 
 
 export default function HomePage() {
   const [messages, setMessages] = useState([
@@ -254,11 +257,11 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Hero Banner Section */}
+      {/* Hero Banner Section - UPDATED TO USE IMPORT */}
       <div className="relative z-10 py-12 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <img
-            src="/hit-man-bg.png"
+            src={heroImage} 
             alt="HELP IT - Just Call the HIT Man. We'll take care of it."
             className="w-full max-w-4xl mx-auto rounded-2xl"
             style={{
