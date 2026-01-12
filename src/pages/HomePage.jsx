@@ -258,7 +258,7 @@ export default function HomePage() {
       <div className="relative z-10 py-12 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <img
-            src="/hit-man-banner.png"
+            src="/hit-man-bg.png"
             alt="HELP IT - Just Call the HIT Man. We'll take care of it."
             className="w-full max-w-4xl mx-auto rounded-2xl"
             style={{
