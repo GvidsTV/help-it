@@ -220,7 +220,7 @@ export default function SetupHubPage() {
               </p>
               <ul className="text-sm space-y-1" style={{color: '#f5f5f4'}}>
                 <li>• I'll send instructions to add me as admin</li>
-                <li>• Your environment is configured within 24 hours</li>
+                <li>• Your environment is configured within 48 hours</li>
                 <li>• You receive complete access details</li>
                 <li>• Your business systems are live</li>
               </ul>
