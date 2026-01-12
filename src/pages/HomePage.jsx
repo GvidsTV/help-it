@@ -12,9 +12,6 @@ import {
 } from "lucide-react";
 
 import ChatWidget from "../components/ChatWidget";
-import hitManBg from "../assets/hit-man-bg.png";
-
-
 
 export default function HomePage() {
   const [messages, setMessages] = useState([
@@ -258,20 +255,19 @@ export default function HomePage() {
       )}
 
       {/* Hero Banner Section */}
-<div className="relative z-10 py-12 px-4">
-  <div className="max-w-7xl mx-auto text-center">
-    <img
-      src={hitManBg}  // 👈 use the imported variable
-      alt="HELP IT - Just Call the HIT Man. We'll take care of it."
-      className="w-full max-w-4xl mx-auto rounded-2xl"
-      style={{
-        boxShadow: "0 0 40px rgba(217, 119, 6, 0.3)",
-        border: "2px solid rgba(217, 119, 6, 0.4)",
-      }}
-    />
-  </div>
-</div>
-
+      <div className="relative z-10 py-12 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <img
+            src="/hit-man-banner.png"
+            alt="HELP IT - Just Call the HIT Man. We'll take care of it."
+            className="w-full max-w-4xl mx-auto rounded-2xl"
+            style={{
+              boxShadow: "0 0 40px rgba(217, 119, 6, 0.3)",
+              border: "2px solid rgba(217, 119, 6, 0.4)",
+            }}
+          />
+        </div>
+      </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
