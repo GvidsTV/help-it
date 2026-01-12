@@ -1,336 +1,265 @@
-import React, { useState } from "react";
-import { Send, Menu, X, ChevronDown, User, MessageSquare, Ticket } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Send,
+  Ticket,
+  MessageSquare,
+  Loader2,
+  User,
+  X,
+  Mail,
+  Image as ImageIcon,
+  XCircle,
+} from "lucide-react";
+
+// Note: Ensure this component exists or remove this line if not used
+// import ChatWidget from "../components/ChatWidget";
 
 export default function HomePage() {
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showTicketForm, setShowTicketForm] = useState(false);
-  const [ticketLoading, setTicketLoading] = useState(false);
-  const [openFaq, setOpenFaq] = useState(null);
-  const [chatInput, setChatInput] = useState("");
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      content:
+        "Welcome to the family. I'm the HIT man, and I'm here to take care of all your tech problems. What's bothering you today?",
+    },
+  ]);
+
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showTicket, setShowTicket] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
+
+  const [wantsEmailUpdates, setWantsEmailUpdates] = useState(false);
+  const [optionalEmail, setOptionalEmail] = useState("");
+
+  const [selectedImage, setSelectedImage] = useState(null); 
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [ticketData, setTicketData] = useState({
     name: "",
     email: "",
-    priority: "Standard (24h)",
-    issue: ""
+    phone: "",
+    issue: "",
+    priority: "medium",
   });
 
-  const faqs = [
-    {
-      q: "What's the 'HIT' list look like?",
-      a: "PC hardware, MacBook failures, server breaches, network security, software problems, and cloud infrastructure. If it has a pulse and a power button, I can fix it."
-    },
-    {
-      q: "How fast do you move?",
-      a: "AI response is instant. For a personal 'hit,' priority tickets are reviewed within 2-4 hours. The family doesn't like to wait."
-    },
-    {
-      q: "Is this strictly remote?",
-      a: "Mostly. I handle things from the shadows, but for the right price (and the right problem), I'll show up in person."
-    },
-    {
-      q: "What are your membership tiers?",
-      a: "We run a family hierarchy: Associate ($0 - free tier), Made Man ($49/mo - most popular), and Don ($299/mo - full access). Don't need a subscription? We offer one-time jobs: Quick Hit ($69), Standard Job ($99), and Heavy Operation ($199). For elite projects, we handle Special Operations with custom pricing."
-    },
-    {
-      q: "Is my data secure?",
-      a: "Absolutely. We use encrypted connections, secure protocols, and strict confidentiality. Your business stays your business. That's the code."
-    }
-  ];
+  const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-  const handleTicketSubmit = async (e) => {
-    e.preventDefault();
-    setTicketLoading(true);
-    
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleImageSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image too large! Under 5MB only.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const resultStr = String(reader.result || "");
+      const base64String = resultStr.includes(",") ? resultStr.split(",")[1] : "";
+      setSelectedImage({ data: base64String, type: file.type, name: file.name });
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleSend = async () => {
+    if ((!input.trim() && !selectedImage) || loading) return;
+
+    const userMessage = {
+      role: "user",
+      content: input.trim() ? input : "Please analyze this image",
+      image: selectedImage,
+    };
+
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
+    setInput("");
+    clearImage();
+    setLoading(true);
+
     try {
-      const response = await fetch("https://formspree.io/f/xdaaogwb", {
+      // THE CONNECTION: This calls your Netlify Function
+      const response = await fetch("/.netlify/functions/chat", {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: ticketData.name,
-          email: ticketData.email,
-          priority: ticketData.priority,
-          issue: ticketData.issue
+          message: userMessage.content,
+          optionalEmail: wantsEmailUpdates ? optionalEmail : undefined,
         }),
       });
-      
-      if (response.ok) {
-        alert("✅ CONTRACT SIGNED. The HIT Man is on the move.");
-        setTicketData({ name: "", email: "", priority: "Standard (24h)", issue: "" });
-        setShowTicketForm(false);
-      } else {
-        alert("❌ Comms are hot. Email support@helpitapp.com through a secure channel.");
-      }
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || "Connection lost");
+
+      setMessages((prev) => [...prev, { role: "assistant", content: data?.reply || "I've handled it." }]);
     } catch (error) {
-      alert("❌ Connection failed. Email support@helpitapp.com directly.");
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "I hit a snag. Submit a ticket and I'll handle this personally." },
+      ]);
     } finally {
-      setTicketLoading(false);
+      setLoading(false);
     }
   };
 
+  const handleTicketSubmit = async () => {
+    if (!ticketData.name || !ticketData.email || !ticketData.issue) {
+      alert("The family needs your name, email, and the problem details.");
+      return;
+    }
+
+    try {
+      // INTEGRATION: This sends the ticket to your Formspree/Email via Netlify
+      const response = await fetch("/.netlify/functions/submit-ticket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ticketData),
+      });
+
+      if (response.ok) {
+        alert("✅ Ticket submitted. We'll take care of it within 24 hours.");
+        setTicketData({ name: "", email: "", phone: "", issue: "", priority: "medium" });
+        setShowTicket(false);
+      } else {
+        throw new Error("Failed to submit");
+      }
+    } catch (error) {
+      alert("Failed to submit ticket. Reach out to us directly.");
+    }
+  };
+
+  const commonIssues = [
+    "Can't log into my email",
+    "WiFi not working",
+    "Forgot my password",
+    "Computer running slow",
+  ];
+
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Top Orange Alert Banner */}
-      <div className="bg-orange-500 text-black py-3 px-4 text-center text-sm font-bold">
-        🔥 IT PROBLEM RIGHT NOW? Text "HIT" to{" "}
-        <a href="tel:407-394-1287" className="underline hover:text-white">407-394-1287</a>
-        {" "}or email{" "}
-        <a href="mailto:support@helpitapp.com" className="underline hover:text-white">support@helpitapp.com</a>
-      </div>
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-amber-500 selection:text-black">
+      {/* Background Glow */}
+      <div className="fixed inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-600 via-transparent to-transparent z-0" />
 
-      {/* Navigation */}
-      <nav className="bg-zinc-900 border-b border-zinc-800">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-3xl font-black text-orange-500 tracking-tight">HELP IT</h1>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#home" className="text-gray-300 hover:text-orange-500 font-semibold transition">HOME</a>
-            <a href="/pricing" className="text-gray-300 hover:text-orange-500 font-semibold transition">PRICING</a>
-            <a href="#setup" className="text-gray-300 hover:text-orange-500 font-semibold transition">SETUP</a>
-            <a href="#help" className="text-gray-300 hover:text-orange-500 font-semibold transition">HELP</a>
-            <a href="#contact" className="text-gray-300 hover:text-orange-500 font-semibold transition">CONTACT</a>
-            <a href="/pricing" className="bg-orange-500 hover:bg-orange-600 text-black px-6 py-2.5 rounded font-black transition shadow-lg">
-              JOIN THE FAMILY
-            </a>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2">
-            <a href="#help" className="text-gray-300 hover:text-orange-500 font-semibold text-sm">
-              HELP
-            </a>
-            <a href="/pricing" className="bg-orange-500 hover:bg-orange-600 text-black px-3 py-1.5 rounded font-bold text-xs">
-              JOIN
-            </a>
-            <button 
-              onClick={() => setShowMobileMenu(!showMobileMenu)} 
-              className="text-white ml-1"
-            >
-              {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu Dropdown */}
-        {showMobileMenu && (
-          <div className="md:hidden bg-zinc-800 border-t border-zinc-700 px-4 py-4 space-y-3">
-            <a href="#home" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-orange-500 font-semibold py-2">HOME</a>
-            <a href="/pricing" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-orange-500 font-semibold py-2">PRICING</a>
-            <a href="#setup" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-orange-500 font-semibold py-2">SETUP</a>
-            <a href="#help" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-orange-500 font-semibold py-2">HELP</a>
-            <a href="#contact" onClick={() => setShowMobileMenu(false)} className="block text-gray-300 hover:text-orange-500 font-semibold py-2">CONTACT</a>
-            <a href="/pricing" onClick={() => setShowMobileMenu(false)} className="block w-full bg-orange-500 hover:bg-orange-600 text-black px-6 py-2.5 rounded font-black mt-2 text-center">
-              JOIN THE FAMILY
-            </a>
-          </div>
-        )}
-      </nav>
-
-      {/* Priority Support Banner */}
-      <div className="bg-orange-900/20 border-b border-orange-900/40 py-3 px-4 flex items-center justify-between">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <p className="text-sm text-orange-400">
-            <span className="mr-2">⚡</span>
-            <span className="font-semibold">Priority Support:</span> Submit a ticket for a 2-hour response window.
+      {/* Banner */}
+      {showBanner && (
+        <div className="relative z-50 bg-amber-900/30 border-b border-amber-600/30 p-3 flex justify-between items-center">
+          <p className="text-amber-400 text-sm flex items-center gap-2">
+            <Mail size={16} /> Need follow-up? Submit a ticket for dedicated support.
           </p>
-          <button className="text-orange-500 hover:text-orange-400 text-2xl font-bold">×</button>
+          <button onClick={() => setShowBanner(false)}><X size={16} className="text-amber-600" /></button>
         </div>
-      </div>
+      )}
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Left Column: AI Chat */}
-          <div className="lg:col-span-2">
-            <div className="bg-zinc-900 border border-orange-900/30 rounded-2xl overflow-hidden shadow-2xl">
-              {/* Chat Header */}
-              <div className="bg-gradient-to-r from-orange-950/30 to-zinc-900 border-b border-orange-900/30 p-5 flex items-center gap-4">
-                <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
-                  <User className="text-black" size={24} />
-                </div>
-                <div>
-                  <h2 className="text-xl font-black text-orange-500 uppercase">The HIT Man AI</h2>
-                  <p className="text-[10px] text-orange-700 uppercase tracking-widest font-bold">FIELD OPERATIVE</p>
-                </div>
+      {/* Header */}
+      <header className="relative z-10 border-b-2 border-amber-600/30 bg-black/90 py-8 shadow-[0_4px_20px_rgba(217,119,6,0.2)]">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+           <h1 className="text-5xl font-black tracking-tighter text-amber-500 uppercase italic">Help IT</h1>
+           <p className="text-amber-700 font-bold tracking-widest uppercase text-xs mt-2">Just call the HIT Man</p>
+        </div>
+      </header>
+
+      <main className="relative z-10 max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Chat Side */}
+        <div className="lg:col-span-2">
+          <div className="bg-zinc-900/80 border-2 border-amber-600/40 rounded-3xl overflow-hidden flex flex-col h-[700px] shadow-2xl shadow-amber-900/20">
+            {/* Chat Header */}
+            <div className="p-4 bg-gradient-to-r from-amber-600/20 to-transparent border-b border-amber-600/30 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/50">
+                <User size={24} className="text-black" />
               </div>
-
-              {/* Chat Messages */}
-              <div className="p-6 min-h-[300px] bg-black/40">
-                <div className="bg-zinc-800/50 border-l-4 border-orange-600 p-4 rounded-lg">
-                  <p className="text-gray-200">Welcome to the family. I'm the HIT man. What's bothering your tech today?</p>
-                </div>
-              </div>
-
-              {/* Chat Input */}
-              <div className="p-4 bg-zinc-950 border-t border-zinc-800">
-                <div className="flex gap-2 mb-3">
-                  <input
-                    type="text"
-                    placeholder="Describe the technical failure..."
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-orange-500 transition"
-                  />
-                  <button className="bg-orange-500 hover:bg-orange-600 text-black p-3 rounded-lg transition">
-                    <Send size={20} />
-                  </button>
-                </div>
-                <button 
-                  onClick={() => setShowTicketForm(!showTicketForm)}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-black py-3 rounded-lg font-black uppercase text-sm transition flex items-center justify-center gap-2"
-                >
-                  <Ticket size={18} />
-                  {showTicketForm ? "CANCEL REQUEST" : "REQUEST PERSONAL HELP"}
-                </button>
+              <div>
+                <h2 className="text-amber-400 font-bold text-lg leading-tight">The HIT Man</h2>
+                <span className="text-amber-700 text-xs font-bold uppercase tracking-widest">Online & Ready</span>
               </div>
             </div>
 
-            {/* Quick Technical Questions */}
-            <div className="mt-8 bg-zinc-900/50 border border-orange-900/20 rounded-2xl p-6">
-              <h3 className="text-lg font-black text-orange-500 uppercase mb-4 flex items-center gap-2">
-                <MessageSquare size={20} />
-                Common Jobs - Click to Start
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {[
-                  "Help setting up email on my iPhone/Android",
-                  "My phone storage is full",
-                  "Can't download or update apps",
-                  "Forgot my Apple ID or Google password",
-                  "Phone battery draining too fast",
-                  "Can't hear people on phone calls",
-                  "Need help with video calls (FaceTime/Zoom)",
-                  "Laptop is very slow and freezing"
-                ].map((question, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setChatInput(question)}
-                    className="text-left bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700 hover:border-orange-500 rounded-lg px-4 py-3 text-sm text-gray-300 hover:text-orange-400 transition group"
-                  >
-                    <span className="text-orange-500 mr-2 group-hover:text-orange-400">→</span>
-                    {question}
-                  </button>
-                ))}
-              </div>
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-black/40">
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${msg.role === 'user' ? 'bg-zinc-700' : 'bg-amber-600'}`}>
+                      <User size={16} className={msg.role === 'user' ? 'text-white' : 'text-black'} />
+                   </div>
+                   <div className={`max-w-[80%] p-4 rounded-2xl border ${msg.role === 'user' ? 'bg-zinc-800 border-zinc-700' : 'bg-amber-950/30 border-amber-600/30 text-amber-50'}`}>
+                      {msg.content}
+                   </div>
+                </div>
+              ))}
+              {loading && <div className="text-amber-500 animate-pulse text-sm font-bold">The HIT Man is thinking...</div>}
+              <div ref={messagesEndRef} />
             </div>
 
-            {/* FAQ Section Below Chat */}
-            <div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
-              <h3 className="text-2xl font-black text-orange-500 uppercase mb-6">Frequently Asked Questions</h3>
+            {/* Input Area */}
+            <div className="p-4 border-t border-amber-600/30 bg-zinc-900/90">
+              <div className="flex gap-2">
+                 <input 
+                   type="file" ref={fileInputRef} className="hidden" onChange={handleImageSelect} 
+                 />
+                 <button onClick={() => fileInputRef.current.click()} className="p-3 rounded-xl border border-amber-600/40 text-amber-500 hover:bg-amber-600/10">
+                   <ImageIcon size={20} />
+                 </button>
+                 <textarea 
+                   className="flex-1 bg-black border border-amber-600/40 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500"
+                   placeholder="Type your problem..."
+                   value={input}
+                   onChange={(e) => setInput(e.target.value)}
+                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+                 />
+                 <button onClick={handleSend} className="bg-amber-500 text-black px-6 rounded-xl font-bold hover:bg-amber-400">
+                   <Send size={20} />
+                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Info/Ticket Side */}
+        <div className="space-y-6">
+          <button 
+            onClick={() => setShowTicket(!showTicket)}
+            className="w-full bg-gradient-to-r from-amber-500 to-amber-700 text-black p-4 rounded-2xl font-black uppercase tracking-tighter flex items-center justify-center gap-3 shadow-xl hover:scale-[1.02] transition-transform"
+          >
+            <Ticket /> {showTicket ? "Back to Intel" : "Request Personal Support"}
+          </button>
+
+          {showTicket ? (
+            <div className="bg-zinc-900 border-2 border-amber-600/40 rounded-3xl p-6">
+              <h2 className="text-amber-500 font-bold text-xl mb-4">The Contract</h2>
               <div className="space-y-4">
-                {faqs.map((faq, i) => (
-                  <div key={i} className="border-b border-zinc-800 pb-4 last:border-0">
-                    <button
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      className="w-full flex justify-between items-center text-left py-2 group"
-                    >
-                      <span className={`font-bold text-sm ${openFaq === i ? 'text-orange-400' : 'text-gray-400 group-hover:text-orange-500'}`}>
-                        {faq.q}
-                      </span>
-                      <ChevronDown 
-                        size={18} 
-                        className={`text-orange-500 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} 
-                      />
-                    </button>
-                    {openFaq === i && (
-                      <p className="text-gray-400 text-sm mt-2 pl-4 border-l-2 border-orange-900">
-                        {faq.a}
-                      </p>
-                    )}
-                  </div>
+                <input type="text" placeholder="Name" className="w-full bg-black border border-zinc-800 p-3 rounded-lg" value={ticketData.name} onChange={e => setTicketData({...ticketData, name: e.target.value})} />
+                <input type="email" placeholder="Email" className="w-full bg-black border border-zinc-800 p-3 rounded-lg" value={ticketData.email} onChange={e => setTicketData({...ticketData, email: e.target.value})} />
+                <textarea placeholder="The Situation..." className="w-full bg-black border border-zinc-800 p-3 rounded-lg h-32" value={ticketData.issue} onChange={e => setTicketData({...ticketData, issue: e.target.value})} />
+                <button onClick={handleTicketSubmit} className="w-full bg-amber-600 text-black font-bold p-3 rounded-lg">Submit Request</button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-amber-900/10 border border-amber-600/20 rounded-3xl p-6">
+              <h3 className="text-amber-500 font-bold mb-4">Common Hits</h3>
+              <div className="grid gap-2">
+                {commonIssues.map((issue, i) => (
+                  <button key={i} onClick={() => setInput(issue)} className="text-left p-3 rounded-lg bg-black/40 border border-zinc-800 text-sm text-zinc-400 hover:border-amber-600/50 transition-colors">
+                    {issue}
+                  </button>
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="lg:col-span-1">
-            {showTicketForm ? (
-              /* Ticket Form */
-              <form onSubmit={handleTicketSubmit} className="bg-zinc-900 border border-orange-600 rounded-2xl p-6 sticky top-4">
-                <h3 className="text-2xl font-black text-orange-500 uppercase mb-4">Submit Contract</h3>
-                <div className="space-y-4">
-                  <input
-                    required
-                    type="text"
-                    placeholder="Name / Alias"
-                    value={ticketData.name}
-                    onChange={e => setTicketData({...ticketData, name: e.target.value})}
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-orange-500"
-                  />
-                  <input
-                    required
-                    type="email"
-                    placeholder="Secure Email"
-                    value={ticketData.email}
-                    onChange={e => setTicketData({...ticketData, email: e.target.value})}
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-orange-500"
-                  />
-                  <select
-                    value={ticketData.priority}
-                    onChange={e => setTicketData({...ticketData, priority: e.target.value})}
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500"
-                  >
-                    <option>Standard (24h)</option>
-                    <option>High Priority (4h)</option>
-                    <option>Emergency (Immediate)</option>
-                  </select>
-                  <textarea
-                    required
-                    placeholder="Describe the job in detail..."
-                    value={ticketData.issue}
-                    onChange={e => setTicketData({...ticketData, issue: e.target.value})}
-                    rows={5}
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-orange-500"
-                  />
-                  <button
-                    disabled={ticketLoading}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-black py-3 rounded-lg font-black uppercase text-sm transition disabled:opacity-50"
-                  >
-                    {ticketLoading ? "SUBMITTING..." : "SIGN CONTRACT"}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              /* Field Procedure */
-              <div className="bg-zinc-900 border border-orange-900/30 rounded-2xl p-6 sticky top-4">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
-                    <MessageSquare className="text-black" size={20} />
-                  </div>
-                  <h3 className="text-xl font-black text-orange-500 uppercase">Field Procedure</h3>
-                </div>
-                
-                <div className="space-y-6">
-                  <div className="flex gap-4">
-                    <span className="text-orange-500 font-black text-lg">01.</span>
-                    <p className="text-gray-300 text-sm">Brief the AI on your technical issue.</p>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-orange-500 font-black text-lg">02.</span>
-                    <p className="text-gray-300 text-sm">Apply the recommended fix immediately.</p>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-orange-500 font-black text-lg">03.</span>
-                    <p className="text-gray-300 text-sm">If issue persists, deploy a Ticket for a direct HIT.</p>
-                  </div>
-                </div>
-
-                <div className="mt-8 p-4 bg-orange-950/20 border border-orange-900/40 rounded-lg">
-                  <p className="text-xs text-orange-400 italic">
-                    "We handle business quietly and efficiently. Your tech problems disappear—no questions asked."
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
+          )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
