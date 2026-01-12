@@ -1,84 +1,80 @@
-exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
+export async function handler(event) {
   try {
-    const { messages } = JSON.parse(event.body);
-
-    // Format messages for Claude API
-    const formattedMessages = messages.map(m => {
-      // If message has an image, create content array
-      if (m.image && m.role === 'user') {
-        return {
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: m.image.type,
-                data: m.image.data
-              }
-            },
-            {
-              type: 'text',
-              text: m.content || 'Please analyze this image and help me with the issue shown.'
-            }
-          ]
-        };
-      }
-      
-      // Regular text message
+    if (event.httpMethod !== "POST") {
       return {
-        role: m.role === 'assistant' ? 'assistant' : 'user',
-        content: m.content
+        statusCode: 405,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ error: "Method not allowed" }),
       };
-    });
+    }
 
-    console.log('Sending to Claude:', JSON.stringify(formattedMessages).substring(0, 500));
+    const { message } = JSON.parse(event.body || "{}");
+    if (!message || typeof message !== "string") {
+      return {
+        statusCode: 400,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reply: "No message received." }),
+      };
+    }
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
+    const apiKey = process.env.CLAUDE_API_KEY;
+    if (!apiKey) {
+      return {
+        statusCode: 500,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reply: "Missing CLAUDE_API_KEY in server env." }),
+      };
+    }
+
+    // Call Anthropic Messages API
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01'
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        // Version header required by Anthropic-compatible APIs (commonly used)
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        system: 'You are a friendly, patient IT support specialist helping everyday people (especially older adults and non-technical users) with common technology problems. When users share screenshots or photos, carefully analyze them and provide specific help based on what you see. Explain things in simple, non-technical language. Use analogies and be very patient. Avoid jargon. Give clear, step-by-step instructions with numbered steps. Be warm and reassuring. Focus on common issues like email problems, phone issues, password resets, WiFi connectivity, social media help, online shopping, video calls, smart home devices, and basic computer tasks.',
-        messages: formattedMessages
-      })
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 300,
+        messages: [{ role: "user", content: message }],
+      }),
     });
 
-    const data = await response.json();
+    const data = await resp.json().catch(() => null);
 
-    console.log('Claude response:', JSON.stringify(data).substring(0, 500));
-
-    if (!response.ok) {
-      console.error('Claude API Error:', data);
-      throw new Error(data.error?.message || 'Claude API error');
+    if (!resp.ok) {
+      // Return useful debug info without crashing the function
+      return {
+        statusCode: 500,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          reply: "The Consigliere had trouble responding. Try again.",
+          details: data || { error: `HTTP ${resp.status}` },
+        }),
+      };
     }
+
+    // Anthropic response usually: { content: [{ type:"text", text:"..." }], ... }
+    const text =
+      data?.content?.find((c) => c.type === "text")?.text ??
+      data?.content?.[0]?.text ??
+      null;
 
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        message: data.content[0].text
-      })
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ reply: text || "No reply returned." }),
     };
-
-  } catch (error) {
-    console.error('Error:', error);
+  } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ 
-        error: 'Sorry, I encountered an error. Please try again or submit a ticket for human support.' 
-      })
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        reply: "System error. Try again.",
+        error: String(err?.message || err),
+      }),
     };
   }
-};
+}

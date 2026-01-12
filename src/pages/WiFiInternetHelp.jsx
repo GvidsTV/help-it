@@ -1,0 +1,320 @@
+import React from "react";
+import { Wifi, ArrowRight, CheckCircle, AlertCircle, Phone, MessageSquare } from "lucide-react";
+
+export default function WiFiInternetHelp() {
+  const sections = [
+    {
+      id: "wont-connect",
+      title: "WiFi Won't Connect",
+      icon: AlertCircle,
+      content: `
+        **Common Causes:**
+        - Router needs restart
+        - Wrong password
+        - Too far from router
+        - Router settings issue
+        
+        **Quick Fixes:**
+        1. Restart your router (unplug 30 seconds)
+        2. Forget network and reconnect
+        3. Move closer to the router
+        4. Check if other devices can connect
+        
+        **Still not connecting?** We can diagnose remotely.
+      `,
+      link: "/help/wifi-wont-connect",
+    },
+    {
+      id: "slow-internet",
+      title: "Internet is Really Slow",
+      icon: AlertCircle,
+      content: `
+        **Check These First:**
+        1. Run a speed test (speedtest.net)
+        2. See how many devices are connected
+        3. Check if someone is streaming/downloading
+        4. Restart your router
+        
+        **Common Fixes:**
+        - Move router to central location
+        - Update router firmware
+        - Change WiFi channel
+        - Upgrade your internet plan
+        
+        **Need faster internet?** We can optimize your setup.
+      `,
+      link: "/contact",
+    },
+    {
+      id: "forgot-password",
+      title: "Forgot WiFi Password",
+      icon: AlertCircle,
+      content: `
+        **How to Find It:**
+        1. Check the sticker on your router
+        2. Look in router settings (192.168.1.1)
+        3. Ask whoever set it up
+        4. Reset router (last resort)
+        
+        **On Windows:**
+        - Settings → Network → WiFi → Properties
+        - Check "Show characters"
+        
+        **On Mac:**
+        - Keychain Access → Search network name
+        
+        **Can't find it?** We'll help you recover or reset it.
+      `,
+      link: "/contact",
+    },
+    {
+      id: "keeps-disconnecting",
+      title: "Keeps Disconnecting",
+      icon: AlertCircle,
+      content: `
+        **Why This Happens:**
+        - Weak signal strength
+        - Router overheating
+        - Interference from other networks
+        - Outdated router firmware
+        
+        **Solutions:**
+        - Move router away from walls/metal
+        - Ensure router has good ventilation
+        - Change to 5GHz band if available
+        - Update router firmware
+        - Consider WiFi extender
+        
+        **Constant drops?** Let us investigate.
+      `,
+      link: "/contact",
+    },
+    {
+      id: "public-wifi",
+      title: "Can't Connect to Public WiFi",
+      icon: AlertCircle,
+      content: `
+        **Common Issues:**
+        - Need to accept terms first
+        - Login page won't load
+        - Network is full
+        - Device blocked
+        
+        **Fixes:**
+        1. Open browser and try to visit any website
+        2. Look for login/accept button
+        3. Try turning WiFi off and on
+        4. "Forget" network and reconnect
+        
+        **Security Tip:** Use VPN on public WiFi!
+      `,
+      link: "/help/security-basics",
+    },
+  ];
+
+  return (
+    <div
+      className="min-h-screen"
+      style={{
+        background: "radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)",
+        position: "relative",
+      }}
+    >
+      {/* SEO Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": sections.map(section => ({
+            "@type": "Question",
+            "name": section.title,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": section.content.replace(/[*#]/g, '')
+            }
+          }))
+        })}
+      </script>
+
+      {/* Background glow */}
+      <div
+        style={{
+          position: "fixed",
+          top: "-50%",
+          left: "-50%",
+          width: "200%",
+          height: "200%",
+          background: "radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      {/* Header */}
+      
+
+      <div className="relative z-10 max-w-5xl mx-auto px-4 py-12">
+        {/* Breadcrumb */}
+        <div className="mb-6" style={{ color: "#d97706", fontSize: "14px" }}>
+          <a href="/help" style={{ color: "#d97706" }}>Help Center</a> / WiFi & Internet Issues
+        </div>
+
+        {/* Hero */}
+        <div className="text-center mb-12">
+          <Wifi size={64} style={{ color: "#10b981", margin: "0 auto 16px" }} />
+          <h1 className="text-5xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            WiFi & Internet Help
+          </h1>
+          <p className="text-xl" style={{ color: "#d97706" }}>
+            Can't connect? Slow speeds? We'll get you back online.
+          </p>
+        </div>
+
+        {/* Quick Navigation */}
+        <div
+          className="rounded-xl p-6 mb-12"
+          style={{
+            background: "rgba(0, 0, 0, 0.7)",
+            border: "2px solid rgba(217, 119, 6, 0.4)",
+          }}
+        >
+          <h2 className="text-xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            Jump to Section:
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {sections.map((section) => (
+              <a
+                key={section.id}
+                href={`#${section.id}`}
+                className="px-4 py-2 rounded-lg text-center text-sm font-semibold"
+                style={{
+                  background: "rgba(217, 119, 6, 0.2)",
+                  color: "#fbbf24",
+                  border: "1px solid rgba(217, 119, 6, 0.3)",
+                }}
+              >
+                {section.title}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Sections */}
+        <div className="space-y-8 mb-12">
+          {sections.map((section) => {
+            const Icon = section.icon;
+            return (
+              <div
+                key={section.id}
+                id={section.id}
+                className="rounded-xl p-8"
+                style={{
+                  background: "rgba(0, 0, 0, 0.7)",
+                  border: "2px solid rgba(217, 119, 6, 0.4)",
+                }}
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <Icon size={32} style={{ color: "#10b981" }} />
+                  <h2 className="text-3xl font-bold" style={{ color: "#fbbf24" }}>
+                    {section.title}
+                  </h2>
+                </div>
+
+                <div
+                  className="prose prose-invert max-w-none"
+                  style={{ color: "#f5f5f4", fontSize: "16px", lineHeight: "1.7" }}
+                >
+                  {section.content.split('\n').map((line, idx) => {
+                    const formatted = line
+                      .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #fbbf24">$1</strong>')
+                      .replace(/^(\d+\.\s)/, '<span style="color: #10b981; font-weight: 600">$1</span>')
+                      .replace(/^(-\s)/, '<span style="color: #10b981">• </span>');
+                    
+                    return (
+                      <p
+                        key={idx}
+                        dangerouslySetInnerHTML={{ __html: formatted }}
+                        style={{ marginBottom: line.trim() === '' ? '12px' : '6px' }}
+                      />
+                    );
+                  })}
+                </div>
+
+                {section.link && (
+                  <a
+                    href={section.link}
+                    className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-lg font-bold"
+                    style={{
+                      background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                      color: "#000",
+                    }}
+                  >
+                    Get Detailed Help <ArrowRight size={18} />
+                  </a>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* CTA */}
+        <div
+          className="rounded-2xl p-12 text-center"
+          style={{
+            background: "linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.2) 100%)",
+            border: "2px solid #fbbf24",
+          }}
+        >
+          <h2 className="text-4xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            Still Having Connection Issues?
+          </h2>
+          <p className="text-xl mb-8" style={{ color: "#f5f5f4" }}>
+            Let us troubleshoot remotely. We'll get your internet working fast.
+          </p>
+
+          <div className="flex flex-wrap gap-4 justify-center">
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold"
+              style={{
+                background: "rgba(120, 113, 108, 0.5)",
+                color: "#fbbf24",
+                border: "2px solid rgba(217, 119, 6, 0.5)",
+              }}
+            >
+              <MessageSquare size={20} />
+              Chat with AI
+            </a>
+            <a
+              href="/contact"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold"
+              style={{
+                background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+                color: "#000",
+                boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
+              }}
+            >
+              <Phone size={20} />
+              Get Personal Help
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer
+        className="relative z-10 border-t py-8"
+        style={{
+          background: "rgba(0, 0, 0, 0.9)",
+          borderTopColor: "rgba(217, 119, 6, 0.3)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p style={{ color: "#78716c", fontSize: "14px" }}>
+            © 2025 Help IT. Just call the HIT Man. We'll take care of IT.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}

@@ -1,0 +1,38 @@
+// src/App.jsx
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SiteHeader from "./components/SiteHeader";
+
+// Core pages
+import HomePage from "./pages/HomePage";
+import PricingPage from "./pages/PricingPage";
+import ContactPage from "./pages/ContactPage";
+import HelpHub from "./pages/HelpHub";
+import SetupHubPage from "./pages/SetupHubPage";
+import RemoteSupportGuide from "./pages/RemoteSupportGuide";
+
+// Help pages
+import WiFiInternetHelp from "./pages/WiFiInternetHelp";
+import IPhoneStorageFull from "./pages/iPhoneStorageFull";  // ← Capital I
+
+function App() {
+  return (
+    <BrowserRouter>
+      <SiteHeader />
+      
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/setup" element={<SetupHubPage />} />
+        <Route path="/help" element={<HelpHub />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/help/remote-support" element={<RemoteSupportGuide />} />
+        
+        <Route path="/help/wifi-internet" element={<WiFiInternetHelp />} />
+        <Route path="/help/iphone-storage-full" element={<IPhoneStorageFull />} />  {/* ← Capital I */}
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;

@@ -11,6 +11,11 @@ import {
   XCircle,
 } from "lucide-react";
 
+import ChatWidget from "../components/ChatWidget";
+import hitManBg from "../assets/hit-man-bg.png";
+
+
+
 export default function HomePage() {
   const [messages, setMessages] = useState([
     {
@@ -25,11 +30,10 @@ export default function HomePage() {
   const [showTicket, setShowTicket] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
 
-  // email opt-in (kept your approach but made the UI behave correctly)
   const [wantsEmailUpdates, setWantsEmailUpdates] = useState(false);
   const [optionalEmail, setOptionalEmail] = useState("");
 
-  const [selectedImage, setSelectedImage] = useState(null); // { data, type, name }
+  const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
   const [ticketData, setTicketData] = useState({
@@ -99,7 +103,6 @@ export default function HomePage() {
       image: selectedImage,
     };
 
-    // build a stable nextMessages array (avoid stale state)
     const nextMessages = [...messages, userMessage];
 
     setMessages(nextMessages);
@@ -113,8 +116,7 @@ export default function HomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: nextMessages,
-          // optional: send email if they opted-in and typed one
+          message: nextMessages[nextMessages.length - 1].content,
           optionalEmail:
             wantsEmailUpdates && optionalEmail.trim()
               ? optionalEmail.trim()
@@ -133,7 +135,7 @@ export default function HomePage() {
 
       const assistantMessage = {
         role: "assistant",
-        content: data?.message || "Got it.",
+        content: data?.reply || "Got it.",
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -189,7 +191,6 @@ export default function HomePage() {
   };
 
   const handleKeyDown = (e) => {
-    // use onKeyDown instead of deprecated onKeyPress behavior
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -230,6 +231,7 @@ export default function HomePage() {
         }}
       />
 
+      {/* Optional Banner */}
       {showBanner && (
         <div
           className="relative z-20"
@@ -255,30 +257,21 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Header with Logo Image */}
-      <header
-        className="relative z-10 border-b"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%)",
-          borderBottomColor: "rgba(217, 119, 6, 0.3)",
-          borderBottomWidth: "2px",
-          boxShadow: "0 4px 20px rgba(217, 119, 6, 0.2)",
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-center">
-          <img
-            src="/hit-man-bg.png"
-            alt="Help IT - Just Call the HIT Man"
-            style={{
-              maxWidth: "600px",
-              width: "100%",
-              height: "auto",
-              objectFit: "contain",
-            }}
-          />
-        </div>
-      </header>
+      {/* Hero Banner Section */}
+<div className="relative z-10 py-12 px-4">
+  <div className="max-w-7xl mx-auto text-center">
+    <img
+      src={hitManBg}  // 👈 use the imported variable
+      alt="HELP IT - Just Call the HIT Man. We'll take care of it."
+      className="w-full max-w-4xl mx-auto rounded-2xl"
+      style={{
+        boxShadow: "0 0 40px rgba(217, 119, 6, 0.3)",
+        border: "2px solid rgba(217, 119, 6, 0.4)",
+      }}
+    />
+  </div>
+</div>
+
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -287,7 +280,7 @@ export default function HomePage() {
             <div
               className="rounded-2xl shadow-2xl flex flex-col"
               style={{
-                height: "calc(100vh - 200px)",
+                height: "calc(100vh - 250px)",
                 maxHeight: "900px",
                 minHeight: "600px",
                 background: "rgba(0, 0, 0, 0.7)",
@@ -802,7 +795,8 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      <ChatWidget />
     </div>
   );
 }
-

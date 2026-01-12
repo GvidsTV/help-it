@@ -1,0 +1,352 @@
+import React from "react";
+import { Smartphone, CheckCircle, AlertTriangle, Phone, MessageSquare, ArrowRight } from "lucide-react";
+
+export default function iPhoneStorageFull() {
+  const steps = [
+    {
+      title: "Check What's Taking Up Space",
+      content: "Go to Settings → General → iPhone Storage. Wait for it to load. You'll see what's using the most space - usually photos, videos, or apps.",
+    },
+    {
+      title: "Delete Unused Apps",
+      content: "Look for apps you never use. Tap them and select 'Delete App'. Games and social media apps are often the biggest culprits.",
+    },
+    {
+      title: "Clear Safari Cache",
+      content: "Settings → Safari → Clear History and Website Data. This can free up several GB instantly without deleting anything important.",
+    },
+    {
+      title: "Offload Unused Apps",
+      content: "Settings → General → iPhone Storage → Offload Unused Apps (turn ON). This removes apps you don't use but keeps their data.",
+    },
+    {
+      title: "Back Up and Delete Photos",
+      content: "Use iCloud Photos or Google Photos to back up, then delete from your phone. Or connect to computer and transfer via iTunes/Finder.",
+    },
+    {
+      title: "Delete Old Messages",
+      content: "Messages with photos/videos take up a lot of space. Settings → Messages → Keep Messages → 30 Days (instead of Forever).",
+    },
+  ];
+
+  const quickTips = [
+    "Photos and videos are usually the biggest problem",
+    "Delete apps you haven't used in 3+ months",
+    "Turn on iCloud Photo Library to save space",
+    "Empty 'Recently Deleted' in Photos app",
+    "Delete old podcast episodes and downloaded music",
+  ];
+
+  return (
+    <div
+      className="min-h-screen"
+      style={{
+        background: "radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)",
+        position: "relative",
+      }}
+    >
+      {/* SEO Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "How to Fix iPhone Storage Full",
+          "description": "Step-by-step guide to free up storage space on your iPhone when it says storage is full",
+          "step": steps.map((step, idx) => ({
+            "@type": "HowToStep",
+            "position": idx + 1,
+            "name": step.title,
+            "text": step.content
+          }))
+        })}
+      </script>
+
+      {/* Background */}
+      <div
+        style={{
+          position: "fixed",
+          top: "-50%",
+          left: "-50%",
+          width: "200%",
+          height: "200%",
+          background: "radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      {/* Header */}
+      
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-12">
+        {/* Breadcrumb */}
+        <div className="mb-6" style={{ color: "#d97706", fontSize: "14px" }}>
+          <a href="/help" style={{ color: "#d97706" }}>Help Center</a> / 
+          <a href="/help/phone-tablet" style={{ color: "#d97706" }}> Phone Help</a> / 
+          iPhone Storage Full
+        </div>
+
+        {/* Hero */}
+        <div className="mb-12">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4"
+            style={{
+              background: "rgba(59, 130, 246, 0.2)",
+              border: "1px solid rgba(59, 130, 246, 0.4)",
+              color: "#3b82f6",
+            }}
+          >
+            <Smartphone size={18} />
+            <span className="font-semibold">Very Common Problem</span>
+          </div>
+
+          <h1 className="text-5xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            iPhone Storage Full? Here's How to Fix It
+          </h1>
+          <p className="text-xl" style={{ color: "#f5f5f4" }}>
+            Can't take photos or download apps? Follow these steps to free up space immediately.
+          </p>
+        </div>
+
+        {/* Quick Tips Box */}
+        <div
+          className="rounded-xl p-6 mb-12"
+          style={{
+            background: "rgba(16, 185, 129, 0.1)",
+            border: "2px solid rgba(16, 185, 129, 0.3)",
+          }}
+        >
+          <h3 className="text-xl font-bold mb-4" style={{ color: "#10b981" }}>
+            ⚡ Quick Wins (Do These First)
+          </h3>
+          <ul className="space-y-2">
+            {quickTips.map((tip, idx) => (
+              <li key={idx} className="flex items-start gap-3">
+                <CheckCircle size={20} style={{ color: "#10b981", flexShrink: 0, marginTop: "2px" }} />
+                <span style={{ color: "#f5f5f4" }}>{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Steps */}
+        <div className="space-y-6 mb-12">
+          <h2 className="text-3xl font-bold mb-6" style={{ color: "#fbbf24" }}>
+            Step-by-Step Solution
+          </h2>
+
+          {steps.map((step, idx) => (
+            <div
+              key={idx}
+              className="rounded-xl p-6"
+              style={{
+                background: "rgba(0, 0, 0, 0.7)",
+                border: "2px solid rgba(217, 119, 6, 0.4)",
+              }}
+            >
+              <div className="flex gap-4">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
+                  {idx + 1}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold mb-2" style={{ color: "#fbbf24" }}>
+                    {step.title}
+                  </h3>
+                  <p style={{ color: "#f5f5f4", fontSize: "16px", lineHeight: "1.6" }}>
+                    {step.content}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Why This Happens */}
+        <div
+          className="rounded-xl p-6 mb-12"
+          style={{
+            background: "rgba(0, 0, 0, 0.7)",
+            border: "2px solid rgba(217, 119, 6, 0.4)",
+          }}
+        >
+          <h3 className="text-2xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            Why Does This Keep Happening?
+          </h3>
+          <div style={{ color: "#f5f5f4", fontSize: "16px", lineHeight: "1.7" }}>
+            <p className="mb-4">
+              <strong style={{ color: "#fbbf24" }}>Photos and videos</strong> are usually the biggest culprit. 
+              A single minute of 4K video can use 400MB. If you take lots of photos, they add up fast.
+            </p>
+            <p className="mb-4">
+              <strong style={{ color: "#fbbf24" }}>Apps cache data</strong> over time. 
+              Social media apps like Facebook, Instagram, and TikTok store tons of temporary files.
+            </p>
+            <p>
+              <strong style={{ color: "#fbbf24" }}>iOS updates</strong> need space. 
+              Apple recommends having at least 6GB free for system updates.
+            </p>
+          </div>
+        </div>
+
+        {/* Prevention Tips */}
+        <div
+          className="rounded-xl p-6 mb-12"
+          style={{
+            background: "rgba(16, 185, 129, 0.1)",
+            border: "2px solid rgba(16, 185, 129, 0.3)",
+          }}
+        >
+          <h3 className="text-2xl font-bold mb-4" style={{ color: "#10b981" }}>
+            How to Prevent This
+          </h3>
+          <ul className="space-y-3" style={{ color: "#f5f5f4", fontSize: "16px" }}>
+            <li className="flex items-start gap-3">
+              <CheckCircle size={20} style={{ color: "#10b981", flexShrink: 0, marginTop: "4px" }} />
+              <div>
+                <strong style={{ color: "#10b981" }}>Enable iCloud Photos:</strong> Settings → Photos → iCloud Photos (ON). 
+                Originals stored in cloud, phone keeps smaller versions.
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <CheckCircle size={20} style={{ color: "#10b981", flexShrink: 0, marginTop: "4px" }} />
+              <div>
+                <strong style={{ color: "#10b981" }}>Auto-delete old messages:</strong> Settings → Messages → Keep Messages → 30 Days
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <CheckCircle size={20} style={{ color: "#10b981", flexShrink: 0, marginTop: "4px" }} />
+              <div>
+                <strong style={{ color: "#10b981" }}>Review storage monthly:</strong> Settings → General → iPhone Storage. 
+                Delete what you don't need before it becomes a problem.
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        {/* Warning Box */}
+        <div
+          className="rounded-xl p-6 mb-12"
+          style={{
+            background: "rgba(245, 158, 11, 0.1)",
+            border: "2px solid rgba(245, 158, 11, 0.3)",
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <AlertTriangle size={24} style={{ color: "#f59e0b", flexShrink: 0 }} />
+            <div>
+              <h4 className="font-bold mb-2" style={{ color: "#f59e0b" }}>
+                Before You Delete Everything...
+              </h4>
+              <p style={{ color: "#f5f5f4", fontSize: "15px" }}>
+                Make sure your photos are backed up! Either to iCloud, Google Photos, or your computer. 
+                Don't risk losing precious memories. Need help backing up? We can walk you through it.
+              </p>
+              <a
+                href="/help/backup-files"
+                className="inline-flex items-center gap-2 mt-3 font-semibold"
+                style={{ color: "#f59e0b" }}
+              >
+                Learn About Backups <ArrowRight size={18} />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Still Need Help */}
+        <div
+          className="rounded-2xl p-12 text-center"
+          style={{
+            background: "linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.2) 100%)",
+            border: "2px solid #fbbf24",
+          }}
+        >
+          <h2 className="text-4xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            Still Running Out of Space?
+          </h2>
+          <p className="text-xl mb-8" style={{ color: "#f5f5f4" }}>
+            We can help you set up iCloud properly, move photos to computer, or find what's really taking up space.
+          </p>
+
+          <div className="flex flex-wrap gap-4 justify-center">
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold"
+              style={{
+                background: "rgba(120, 113, 108, 0.5)",
+                color: "#fbbf24",
+                border: "2px solid rgba(217, 119, 6, 0.5)",
+              }}
+            >
+              <MessageSquare size={20} />
+              Try AI Diagnosis
+            </a>
+            <a
+              href="/contact"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold"
+              style={{
+                background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+                color: "#000",
+                boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
+              }}
+            >
+              <Phone size={20} />
+              Get Personal Help
+            </a>
+          </div>
+        </div>
+
+        {/* Related Links */}
+        <div className="mt-12">
+          <h3 className="text-2xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            Related Help Topics
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Can't Download Apps", link: "/help/cant-download-apps" },
+              { title: "Backup Your iPhone", link: "/help/backup-files" },
+              { title: "All Phone Help Topics", link: "/help/phone-tablet" },
+              { title: "iCloud Setup", link: "/help/phone-tablet#icloud" },
+            ].map((item, idx) => (
+              <a
+                key={idx}
+                href={item.link}
+                className="p-4 rounded-lg flex items-center justify-between"
+                style={{
+                  background: "rgba(0, 0, 0, 0.6)",
+                  border: "1px solid rgba(217, 119, 6, 0.3)",
+                  color: "#fbbf24",
+                }}
+              >
+                <span>{item.title}</span>
+                <ArrowRight size={18} />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer
+        className="relative z-10 border-t py-8 mt-16"
+        style={{
+          background: "rgba(0, 0, 0, 0.9)",
+          borderTopColor: "rgba(217, 119, 6, 0.3)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p style={{ color: "#78716c", fontSize: "14px" }}>
+            © 2025 Help IT. Just call the HIT Man. We'll take care of IT.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}

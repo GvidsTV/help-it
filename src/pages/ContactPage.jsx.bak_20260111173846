@@ -1,0 +1,558 @@
+import React, { useState } from "react";
+import { Phone, Mail, MessageSquare, Clock, Send, Check } from "lucide-react";
+
+export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    tier: "question",
+    priority: "medium",
+    message: "",
+  });
+
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // In production, this would call your ticket submission function
+    // For now, just show success message
+    console.log("Form submitted:", formData);
+    setSubmitted(true);
+    
+    // Reset form after 3 seconds
+    setTimeout(() => {
+      setSubmitted(false);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        tier: "question",
+        priority: "medium",
+        message: "",
+      });
+    }, 3000);
+  };
+
+  return (
+    <div
+      className="min-h-screen"
+      style={{
+        background: "radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)",
+        position: "relative",
+      }}
+    >
+      {/* Background glow */}
+      <div
+        style={{
+          position: "fixed",
+          top: "-50%",
+          left: "-50%",
+          width: "200%",
+          height: "200%",
+          background: "radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      {/* Header */}
+      <header
+        className="relative z-10 border-b"
+        style={{
+          background: "linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%)",
+          borderBottomColor: "rgba(217, 119, 6, 0.3)",
+          borderBottomWidth: "2px",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+          <a href="/">
+            <img src="/hit-man-bg.png" alt="Help IT" style={{ maxWidth: "300px", height: "auto" }} />
+          </a>
+          <nav className="flex gap-6">
+            <a href="/" style={{ color: "#fbbf24", fontWeight: "600" }}>Home</a>
+            <a href="/pricing" style={{ color: "#fbbf24", fontWeight: "600" }}>Pricing</a>
+            <a href="/help" style={{ color: "#fbbf24", fontWeight: "600" }}>Help</a>
+            <a href="/contact" style={{ color: "#fbbf24", fontWeight: "600" }}>Contact</a>
+          </nav>
+        </div>
+      </header>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
+        {/* Hero */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            Get in Touch
+          </h1>
+          <p className="text-xl" style={{ color: "#d97706" }}>
+            Multiple ways to reach The HIT Man. We're here to help.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Contact Methods */}
+          <div>
+            <h2 className="text-3xl font-bold mb-6" style={{ color: "#fbbf24" }}>
+              Direct Contact
+            </h2>
+
+            <div className="space-y-4">
+              {/* Phone */}
+              <a
+                href="tel:407-504-1287"
+                className="block rounded-xl p-6 transition-all"
+                style={{
+                  background: "rgba(0, 0, 0, 0.7)",
+                  border: "2px solid rgba(217, 119, 6, 0.4)",
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+                    }}
+                  >
+                    <Phone size={24} style={{ color: "#000" }} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-1" style={{ color: "#fbbf24" }}>
+                      Call or Text
+                    </h3>
+                    <p className="text-2xl font-bold mb-2" style={{ color: "#f5f5f4" }}>
+                      407-504-1287
+                    </p>
+                    <p style={{ color: "#d97706", fontSize: "14px" }}>
+                      Mon-Fri 9am-6pm EST • Emergency after-hours for Don members
+                    </p>
+                  </div>
+                </div>
+              </a>
+
+              {/* Email */}
+              <a
+                href="mailto:support@helpitapp.com"
+                className="block rounded-xl p-6 transition-all"
+                style={{
+                  background: "rgba(0, 0, 0, 0.7)",
+                  border: "2px solid rgba(217, 119, 6, 0.4)",
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+                    }}
+                  >
+                    <Mail size={24} style={{ color: "#000" }} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-1" style={{ color: "#fbbf24" }}>
+                      Email Us
+                    </h3>
+                    <p className="text-lg font-bold mb-2" style={{ color: "#f5f5f4" }}>
+                      support@helpitapp.com
+                    </p>
+                    <p style={{ color: "#d97706", fontSize: "14px" }}>
+                      Response within 24-48 hours (same-day for Don members)
+                    </p>
+                  </div>
+                </div>
+              </a>
+
+              {/* AI Chat */}
+              <a
+                href="/"
+                className="block rounded-xl p-6 transition-all"
+                style={{
+                  background: "linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(146, 64, 14, 0.2) 100%)",
+                  border: "2px solid rgba(251, 191, 36, 0.5)",
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+                    }}
+                  >
+                    <MessageSquare size={24} style={{ color: "#000" }} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-1" style={{ color: "#fbbf24" }}>
+                      Chat with The Consigliere
+                    </h3>
+                    <p className="mb-2" style={{ color: "#f5f5f4" }}>
+                      Instant AI diagnosis — available 24/7
+                    </p>
+                    <span
+                      className="inline-block px-4 py-2 rounded-lg font-semibold"
+                      style={{
+                        background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+                        color: "#000",
+                      }}
+                    >
+                      Start Chat (Free)
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            {/* Hours */}
+            <div
+              className="rounded-xl p-6 mt-6"
+              style={{
+                background: "rgba(0, 0, 0, 0.6)",
+                border: "1px solid rgba(217, 119, 6, 0.3)",
+              }}
+            >
+              <div className="flex items-start gap-3">
+                <Clock size={24} style={{ color: "#fbbf24" }} />
+                <div>
+                  <h4 className="font-bold mb-2" style={{ color: "#fbbf24" }}>
+                    Support Hours
+                  </h4>
+                  <ul style={{ color: "#f5f5f4", fontSize: "15px" }}>
+                    <li>Monday - Friday: 9am - 6pm EST</li>
+                    <li>Saturday: 10am - 4pm EST</li>
+                    <li>Sunday: Closed</li>
+                    <li style={{ color: "#fbbf24", marginTop: "8px" }}>
+                      ⚡ Don members: Emergency after-hours available
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Form */}
+          <div>
+            <h2 className="text-3xl font-bold mb-6" style={{ color: "#fbbf24" }}>
+              Submit a Support Request
+            </h2>
+
+            {submitted ? (
+              <div
+                className="rounded-xl p-12 text-center"
+                style={{
+                  background: "rgba(16, 185, 129, 0.1)",
+                  border: "2px solid rgba(16, 185, 129, 0.3)",
+                }}
+              >
+                <Check size={64} style={{ color: "#10b981", margin: "0 auto 16px" }} />
+                <h3 className="text-2xl font-bold mb-2" style={{ color: "#10b981" }}>
+                  Request Submitted!
+                </h3>
+                <p style={{ color: "#f5f5f4" }}>
+                  We'll take care of it within 24 hours.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <div
+                  className="rounded-xl p-6"
+                  style={{
+                    background: "rgba(0, 0, 0, 0.7)",
+                    border: "2px solid rgba(217, 119, 6, 0.4)",
+                  }}
+                >
+                  <div className="space-y-4">
+                    {/* Name */}
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block font-semibold mb-2"
+                        style={{ color: "#fbbf24" }}
+                      >
+                        Your Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full px-4 py-3 rounded-lg"
+                        placeholder="John Doe"
+                        style={{
+                          background: "rgba(0, 0, 0, 0.5)",
+                          border: "2px solid rgba(217, 119, 6, 0.4)",
+                          color: "#f5f5f4",
+                        }}
+                      />
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block font-semibold mb-2"
+                        style={{ color: "#fbbf24" }}
+                      >
+                        Email *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-4 py-3 rounded-lg"
+                        placeholder="your.email@example.com"
+                        style={{
+                          background: "rgba(0, 0, 0, 0.5)",
+                          border: "2px solid rgba(217, 119, 6, 0.4)",
+                          color: "#f5f5f4",
+                        }}
+                      />
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="block font-semibold mb-2"
+                        style={{ color: "#fbbf24" }}
+                      >
+                        Phone (Optional)
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-4 py-3 rounded-lg"
+                        placeholder="(555) 123-4567"
+                        style={{
+                          background: "rgba(0, 0, 0, 0.5)",
+                          border: "2px solid rgba(217, 119, 6, 0.4)",
+                          color: "#f5f5f4",
+                        }}
+                      />
+                    </div>
+
+                    {/* Request Type */}
+                    <div>
+                      <label
+                        htmlFor="tier"
+                        className="block font-semibold mb-2"
+                        style={{ color: "#fbbf24" }}
+                      >
+                        I'm Interested In *
+                      </label>
+                      <select
+                        id="tier"
+                        required
+                        value={formData.tier}
+                        onChange={(e) => setFormData({ ...formData, tier: e.target.value })}
+                        className="w-full px-4 py-3 rounded-lg"
+                        style={{
+                          background: "rgba(0, 0, 0, 0.5)",
+                          border: "2px solid rgba(217, 119, 6, 0.4)",
+                          color: "#f5f5f4",
+                        }}
+                      >
+                        <option value="question">General Question</option>
+                        <option value="support">Getting IT Support</option>
+                        <option value="mademan">Made Man Subscription ($49/mo)</option>
+                        <option value="don">Don Subscription ($299/mo)</option>
+                        <option value="payperfix">One-Time Fix</option>
+                        <option value="specialops">Special Operations Project</option>
+                      </select>
+                    </div>
+
+                    {/* Priority */}
+                    <div>
+                      <label
+                        htmlFor="priority"
+                        className="block font-semibold mb-2"
+                        style={{ color: "#fbbf24" }}
+                      >
+                        How Urgent?
+                      </label>
+                      <select
+                        id="priority"
+                        value={formData.priority}
+                        onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                        className="w-full px-4 py-3 rounded-lg"
+                        style={{
+                          background: "rgba(0, 0, 0, 0.5)",
+                          border: "2px solid rgba(217, 119, 6, 0.4)",
+                          color: "#f5f5f4",
+                        }}
+                      >
+                        <option value="low">Not urgent - can wait a few days</option>
+                        <option value="medium">Within 24-48 hours</option>
+                        <option value="high">Pretty urgent - today if possible</option>
+                        <option value="urgent">ASAP - It's critical!</option>
+                      </select>
+                    </div>
+
+                    {/* Message */}
+                    <div>
+                      <label
+                        htmlFor="message"
+                        className="block font-semibold mb-2"
+                        style={{ color: "#fbbf24" }}
+                      >
+                        Tell Us What's Going On *
+                      </label>
+                      <textarea
+                        id="message"
+                        required
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        rows={6}
+                        className="w-full px-4 py-3 rounded-lg"
+                        placeholder="Describe your tech problem or question..."
+                        style={{
+                          background: "rgba(0, 0, 0, 0.5)",
+                          border: "2px solid rgba(217, 119, 6, 0.4)",
+                          color: "#f5f5f4",
+                        }}
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-bold transition-all"
+                      style={{
+                        background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+                        color: "#000",
+                        boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
+                      }}
+                    >
+                      <Send size={20} />
+                      Submit Request
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+
+        {/* Response Times */}
+        <div
+          className="rounded-2xl p-8 mb-12"
+          style={{
+            background: "linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%)",
+            border: "2px solid rgba(217, 119, 6, 0.4)",
+          }}
+        >
+          <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: "#fbbf24" }}>
+            What to Expect
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3"
+                style={{
+                  background: "rgba(120, 113, 108, 0.5)",
+                  border: "2px solid #78716c",
+                }}
+              >
+                <MessageSquare size={28} style={{ color: "#78716c" }} />
+              </div>
+              <h3 className="font-bold mb-2" style={{ color: "#78716c" }}>
+                Associate (Free)
+              </h3>
+              <p style={{ color: "#f5f5f4", fontSize: "15px" }}>
+                AI chat responds instantly, 24/7
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3"
+                style={{
+                  background: "linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.3) 100%)",
+                  border: "2px solid #d97706",
+                }}
+              >
+                <Clock size={28} style={{ color: "#d97706" }} />
+              </div>
+              <h3 className="font-bold mb-2" style={{ color: "#d97706" }}>
+                Made Man ($49/mo)
+              </h3>
+              <p style={{ color: "#f5f5f4", fontSize: "15px" }}>
+                Response within 24-48 hours
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3"
+                style={{
+                  background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+                  boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
+                }}
+              >
+                <Phone size={28} style={{ color: "#000" }} />
+              </div>
+              <h3 className="font-bold mb-2" style={{ color: "#fbbf24" }}>
+                Don ($299/mo)
+              </h3>
+              <p style={{ color: "#f5f5f4", fontSize: "15px" }}>
+                Same-day priority response
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div
+          className="rounded-2xl p-12 text-center"
+          style={{
+            background: "rgba(0, 0, 0, 0.7)",
+            border: "2px solid rgba(217, 119, 6, 0.4)",
+          }}
+        >
+          <h2 className="text-4xl font-bold mb-4" style={{ color: "#fbbf24" }}>
+            Not Sure What You Need?
+          </h2>
+          <p className="text-xl mb-8" style={{ color: "#f5f5f4" }}>
+            Start with free AI diagnosis and we'll help you figure it out.
+          </p>
+
+          <a
+            href="/"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold transition-all"
+            style={{
+              background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
+              color: "#000",
+              boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
+            }}
+          >
+            <MessageSquare size={20} />
+            Try Free AI Chat
+          </a>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer
+        className="relative z-10 border-t py-8"
+        style={{
+          background: "rgba(0, 0, 0, 0.9)",
+          borderTopColor: "rgba(217, 119, 6, 0.3)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p style={{ color: "#78716c", fontSize: "14px" }}>
+            © 2025 Help IT. Just call the HIT Man. We'll take care of IT.
+          </p>
+          <div className="flex gap-6 justify-center mt-4">
+            <a href="tel:407-504-1287" style={{ color: "#d97706" }}>407-504-1287</a>
+            <a href="mailto:support@helpitapp.com" style={{ color: "#d97706" }}>support@helpitapp.com</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
