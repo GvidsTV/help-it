@@ -32,7 +32,7 @@ export default function SetupHubPage() {
           </h1>
           
           <p className="text-xl max-w-3xl mx-auto" style={{color: '#f5f5f4'}}>
-            Get your website, email, and infrastructure online in 10 minutes.
+            Get your website, email, and infrastructure online with our help.
           </p>
         </div>
 
