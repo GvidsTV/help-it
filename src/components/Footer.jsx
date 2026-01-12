@@ -19,7 +19,7 @@ export default function Footer() {
             
             <div className="space-y-3">
               <a
-                href="sms:3214569810"
+                href="sms:4075041287"
                 className="flex items-center gap-3 transition-all hover:transform hover:translate-x-1"
                 style={{textDecoration: 'none'}}
               >
@@ -154,7 +154,7 @@ export default function Footer() {
         }}>
           <p className="text-sm md:text-base" style={{color: '#f5f5f4'}}>
             <strong style={{color: '#fbbf24'}}>IT Problem Right Now?</strong>{' '}
-            <a href="sms:3214569810" style={{color: '#fbbf24', textDecoration: 'underline', fontWeight: 'bold'}}>
+            <a href="sms:4075041287" style={{color: '#fbbf24', textDecoration: 'underline', fontWeight: 'bold'}}>
               Text "HIT" to 407-504-1287
             </a>
             {' '}for immediate diagnosis.
