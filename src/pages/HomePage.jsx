@@ -1,40 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  Send,
-  Ticket,
-  MessageSquare,
-  Loader2,
-  User,
-  X,
-  Mail,
-  Image as ImageIcon,
-  XCircle,
-} from "lucide-react";
-
-import ChatWidget from "../components/ChatWidget";
-// IMPORT THE IMAGE HERE
-// This ensures React bundles it correctly and optimized it
-import heroImage from "../assets/hit-man-bg.png"; 
+import { Send, Ticket, MessageSquare, User, X, Mail, Image as ImageIcon } from "lucide-react";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content:
-        "Welcome to the family. I'm the HIT man, and I'm here to take care of all your tech problems. What's bothering you today?",
+      content: "Welcome to the family. I'm the HIT man. What's bothering your tech today?",
     },
   ]);
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submittingTicket, setSubmittingTicket] = useState(false);
   const [showTicket, setShowTicket] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
-
-  const [wantsEmailUpdates, setWantsEmailUpdates] = useState(false);
-  const [optionalEmail, setOptionalEmail] = useState("");
-
   const [selectedImage, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
 
   const [ticketData, setTicketData] = useState({
     name: "",
@@ -46,7 +26,6 @@ export default function HomePage() {
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
-  const messageCount = useRef(0);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -56,743 +35,128 @@ export default function HomePage() {
     scrollToBottom();
   }, [messages]);
 
-  const handleImageSelect = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image too large! Please select an image under 5MB.");
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image file (JPG, PNG, etc.)");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const resultStr = String(reader.result || "");
-      const base64String = resultStr.includes(",")
-        ? resultStr.split(",")[1]
-        : "";
-
-      setSelectedImage({
-        data: base64String,
-        type: file.type,
-        name: file.name,
-      });
-      setImagePreview(reader.result);
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  const clearImage = () => {
-    setSelectedImage(null);
-    setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
+  // CHAT LOGIC (Keeping Netlify for now as requested)
   const handleSend = async () => {
     if ((!input.trim() && !selectedImage) || loading) return;
 
-    const userMessage = {
-      role: "user",
-      content: input.trim() ? input : "Please analyze this image",
-      image: selectedImage,
-    };
-
-    const nextMessages = [...messages, userMessage];
-
-    setMessages(nextMessages);
+    const userMessage = { role: "user", content: input.trim() || "Image uploaded" };
+    setMessages([...messages, userMessage]);
     setInput("");
-    clearImage();
     setLoading(true);
-    messageCount.current += 1;
 
     try {
       const response = await fetch("/.netlify/functions/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: nextMessages[nextMessages.length - 1].content,
-          optionalEmail:
-            wantsEmailUpdates && optionalEmail.trim()
-              ? optionalEmail.trim()
-              : undefined,
-        }),
+        body: JSON.stringify({ message: userMessage.content }),
       });
-
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error || "Request failed");
-      }
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-
-      const assistantMessage = {
-        role: "assistant",
-        content: data?.reply || "Got it.",
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, { role: "assistant", content: data?.reply || "I'm on it." }]);
     } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content:
-            "I hit a snag there. Try again, or if you need me to handle this personally, submit a ticket and I'll take care of it.",
-        },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "Comms are down. Submit a ticket for a direct response." }]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTicketSubmit = async () => {
-    if (!ticketData.name || !ticketData.email || !ticketData.issue) {
-      alert("Please fill in your name, email, and describe the issue");
-      return;
-    }
+  // TICKET FORM LOGIC (Formspree Integrated)
+  const handleTicketSubmit = async (e) => {
+    if (e) e.preventDefault();
+    setSubmittingTicket(true);
 
     try {
-      const response = await fetch("/.netlify/functions/submit-ticket", {
+      const response = await fetch("https://formspree.io/f/xnjjqdgo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ticketData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error || "Ticket request failed");
-      }
-
-      if (data?.success) {
-        alert(`✅ ${data.message}\n\nWe'll take care of it within 24 hours.`);
-        setTicketData({
-          name: "",
-          email: "",
-          phone: "",
-          issue: "",
-          priority: "medium",
-        });
+      if (response.ok) {
+        alert("✅ TICKET DISPATCHED. The HIT Man will contact you shortly.");
+        setTicketData({ name: "", email: "", phone: "", issue: "", priority: "medium" });
         setShowTicket(false);
-      } else {
-        throw new Error(data?.error || "Failed to submit ticket");
       }
     } catch (error) {
-      alert("Failed to submit ticket. Please try again or email us directly.");
+      alert("Dispatch failed. Please text 407-504-1287 directly.");
+    } finally {
+      setSubmittingTicket(false);
     }
   };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const commonIssues = [
-    "Can't log into my email",
-    "WiFi not working",
-    "Forgot my password",
-    "Phone storage is full",
-    "Can't make video calls",
-    "Computer running slow",
-    "Can't download photos",
-    "Printer won't connect",
-  ];
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background:
-          "radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)",
-        position: "relative",
-      }}
-    >
-      <div
-        style={{
-          position: "fixed",
-          top: "-50%",
-          left: "-50%",
-          width: "200%",
-          height: "200%",
-          background:
-            "radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)",
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-
-      {/* Optional Banner */}
+    <div className="min-h-screen bg-black text-white">
       {showBanner && (
-        <div
-          className="relative z-20"
-          style={{
-            background:
-              "linear-gradient(90deg, rgba(217, 119, 6, 0.15) 0%, rgba(146, 64, 14, 0.15) 100%)",
-            borderBottom: "1px solid rgba(217, 119, 6, 0.3)",
-            padding: "12px 20px",
-          }}
-        >
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Mail size={20} style={{ color: "#fbbf24" }} />
-              <p className="text-sm" style={{ color: "#fbbf24" }}>
-                💡 Need follow-up help? Submit a ticket for email updates and
-                dedicated support.
-              </p>
-            </div>
-            <button onClick={() => setShowBanner(false)} style={{ color: "#d97706" }}>
-              <X size={18} />
-            </button>
-          </div>
+        <div className="bg-amber-900/20 border-b border-amber-600/30 p-3 flex justify-between items-center max-w-7xl mx-auto rounded-b-xl">
+           <p className="text-amber-400 text-sm flex items-center gap-2"><Mail size={16}/> Priority Support: Submit a ticket for a 2-hour response window.</p>
+           <button onClick={() => setShowBanner(false)}><X size={18} className="text-amber-600"/></button>
         </div>
       )}
 
-      {/* Hero Banner Section - UPDATED TO USE IMPORT */}
-      <div className="relative z-10 py-12 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-         <img
-  <img 
-  src={`${process.env.PUBLIC_URL}/hit-man-bg.png`} 
-  alt="HIT Man Banner"
-  className="w-full max-w-4xl mx-auto rounded-2xl"
-/>
-        </div>
+      <div className="py-10 text-center px-4">
+        <img src="/hit-man-bg.png" alt="HIT Man" className="max-w-4xl w-full mx-auto rounded-2xl border-2 border-amber-600/20 shadow-2xl shadow-amber-900/20" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Chat column */}
-          <div className="lg:col-span-2">
-            <div
-              className="rounded-2xl shadow-2xl flex flex-col"
-              style={{
-                height: "calc(100vh - 250px)",
-                maxHeight: "900px",
-                minHeight: "600px",
-                background: "rgba(0, 0, 0, 0.7)",
-                border: "2px solid rgba(217, 119, 6, 0.4)",
-                boxShadow:
-                  "0 0 40px rgba(217, 119, 6, 0.2), inset 0 0 60px rgba(217, 119, 6, 0.05)",
-              }}
-            >
-              <div
-                className="px-6 py-4"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%)",
-                  borderBottom: "2px solid rgba(217, 119, 6, 0.3)",
-                }}
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                      boxShadow: "0 0 20px rgba(251, 191, 36, 0.5)",
-                    }}
-                  >
-                    <User className="text-black" size={24} />
-                  </div>
-                  <div>
-                    <h2 className="font-bold text-xl" style={{ color: "#fbbf24" }}>
-                      The HIT Man
-                    </h2>
-                    <p className="text-sm" style={{ color: "#d97706" }}>
-                      Your personal tech specialist
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="flex-1 overflow-y-auto p-6 space-y-4"
-                style={{ background: "rgba(0, 0, 0, 0.4)" }}
-              >
-                {messages.map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex gap-3 ${
-                      msg.role === "user" ? "flex-row-reverse" : "flex-row"
-                    }`}
-                  >
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{
-                        background:
-                          msg.role === "user"
-                            ? "linear-gradient(135deg, #57534e 0%, #292524 100%)"
-                            : "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                        boxShadow:
-                          msg.role === "user"
-                            ? "0 0 10px rgba(87, 83, 78, 0.5)"
-                            : "0 0 15px rgba(251, 191, 36, 0.6)",
-                      }}
-                    >
-                      <User
-                        size={20}
-                        style={{ color: msg.role === "user" ? "#fff" : "#000" }}
-                      />
-                    </div>
-
-                    <div
-                      className="max-w-[85%] rounded-2xl px-5 py-3 shadow-lg"
-                      style={{
-                        background:
-                          msg.role === "user"
-                            ? "linear-gradient(135deg, rgba(68, 64, 60, 0.8) 0%, rgba(41, 37, 36, 0.9) 100%)"
-                            : "linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(0, 0, 0, 0.6) 100%)",
-                        border:
-                          msg.role === "user"
-                            ? "1px solid rgba(120, 113, 108, 0.5)"
-                            : "1px solid rgba(217, 119, 6, 0.4)",
-                        color: "#f5f5f4",
-                        wordWrap: "break-word",
-                        overflowWrap: "break-word",
-                      }}
-                    >
-                      {msg.image && (
-                        <img
-                          src={`data:${msg.image.type};base64,${msg.image.data}`}
-                          alt="Uploaded"
-                          className="rounded-lg mb-2 max-w-full"
-                          style={{ maxHeight: "300px", objectFit: "contain" }}
-                        />
-                      )}
-                      <p
-                        className="text-base leading-relaxed whitespace-pre-wrap"
-                        style={{ wordBreak: "break-word" }}
-                      >
-                        {msg.content}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-
-                {loading && (
-                  <div className="flex gap-3">
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                        boxShadow: "0 0 15px rgba(251, 191, 36, 0.6)",
-                      }}
-                    >
-                      <Loader2 size={20} className="text-black animate-spin" />
-                    </div>
-                    <div
-                      className="rounded-2xl px-5 py-3"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(0, 0, 0, 0.6) 100%)",
-                        border: "1px solid rgba(217, 119, 6, 0.4)",
-                      }}
-                    >
-                      <p className="text-base" style={{ color: "#fbbf24" }}>
-                        Analyzing...
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Composer */}
-              <div
-                className="p-4"
-                style={{
-                  background: "rgba(0, 0, 0, 0.6)",
-                  borderTop: "2px solid rgba(217, 119, 6, 0.3)",
-                }}
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="emailUpdates"
-                    checked={wantsEmailUpdates}
-                    onChange={(e) => {
-                      const checked = e.target.checked;
-                      setWantsEmailUpdates(checked);
-                      if (!checked) setOptionalEmail("");
-                    }}
-                    className="w-4 h-4"
-                  />
-                  <label
-                    htmlFor="emailUpdates"
-                    className="text-sm"
-                    style={{ color: "#fbbf24" }}
-                  >
-                    Need follow-up help? Submit your email.
-                  </label>
-                </div>
-
-                {wantsEmailUpdates && (
-                  <input
-                    type="email"
-                    value={optionalEmail}
-                    onChange={(e) => setOptionalEmail(e.target.value)}
-                    placeholder="your.email@example.com"
-                    className="w-full px-4 py-2 rounded-lg mb-2 text-sm"
-                    style={{
-                      background: "rgba(0, 0, 0, 0.5)",
-                      border: "1px solid rgba(217, 119, 6, 0.4)",
-                      color: "#f5f5f4",
-                    }}
-                  />
-                )}
-
-                {imagePreview && (
-                  <div className="mb-3 relative inline-block">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="rounded-lg"
-                      style={{ maxHeight: "150px", maxWidth: "100%" }}
-                    />
-                    <button
-                      onClick={clearImage}
-                      className="absolute top-2 right-2 rounded-full p-1"
-                      style={{
-                        background: "rgba(0, 0, 0, 0.7)",
-                        color: "#fbbf24",
-                      }}
-                      type="button"
-                    >
-                      <XCircle size={20} />
-                    </button>
-                  </div>
-                )}
-
-                <div className="flex gap-2 mb-3">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageSelect}
-                    accept="image/*"
-                    style={{ display: "none" }}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-3 rounded-xl font-bold transition-all flex items-center gap-2"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.3) 100%)",
-                      border: "2px solid rgba(217, 119, 6, 0.5)",
-                      color: "#fbbf24",
-                    }}
-                    disabled={loading}
-                  >
-                    <ImageIcon size={20} />
-                  </button>
-
-                  <textarea
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Tell me what's wrong..."
-                    rows={2}
-                    className="flex-1 px-4 py-3 rounded-xl focus:outline-none text-base resize-none"
-                    style={{
-                      background: "rgba(0, 0, 0, 0.6)",
-                      border: "2px solid rgba(217, 119, 6, 0.5)",
-                      color: "#f5f5f4",
-                      boxShadow: "0 0 10px rgba(217, 119, 6, 0.2)",
-                    }}
-                    disabled={loading}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={handleSend}
-                    disabled={loading || (!input.trim() && !selectedImage)}
-                    className="px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2"
-                    style={{
-                      background:
-                        loading || (!input.trim() && !selectedImage)
-                          ? "rgba(120, 113, 108, 0.5)"
-                          : "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                      color: "#000",
-                      boxShadow:
-                        loading || (!input.trim() && !selectedImage)
-                          ? "none"
-                          : "0 0 20px rgba(251, 191, 36, 0.4)",
-                      cursor:
-                        loading || (!input.trim() && !selectedImage)
-                          ? "not-allowed"
-                          : "pointer",
-                    }}
-                  >
-                    <Send size={20} />
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setShowTicket((v) => !v)}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold transition-all shadow-lg"
-                  style={{
-                    background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                    color: "#000",
-                    border: "2px solid #fbbf24",
-                    boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
-                  }}
-                >
-                  <Ticket size={20} />
-                  Get Personal Help
-                </button>
-              </div>
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20">
+        <div className="lg:col-span-2 bg-zinc-900/50 border-2 border-amber-600/30 rounded-3xl flex flex-col h-[650px] overflow-hidden">
+          <div className="p-6 border-b border-amber-600/20 bg-amber-600/5 flex items-center gap-4">
+            <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-black font-bold"><User /></div>
+            <div>
+              <h2 className="font-bold text-xl text-amber-400">The HIT Man AI</h2>
+              <p className="text-[10px] text-amber-600 uppercase tracking-widest font-black">Field Operative</p>
             </div>
           </div>
 
-          {/* Right column */}
-          <div className="lg:col-span-1">
-            {showTicket ? (
-              <div
-                className="rounded-2xl shadow-2xl p-6"
-                style={{
-                  background: "rgba(0, 0, 0, 0.7)",
-                  border: "2px solid rgba(217, 119, 6, 0.4)",
-                  boxShadow: "0 0 40px rgba(217, 119, 6, 0.2)",
-                }}
-              >
-                <h3 className="text-2xl font-bold mb-2" style={{ color: "#fbbf24" }}>
-                  Request Personal Support
-                </h3>
-                <p className="text-sm mb-6" style={{ color: "#d97706" }}>
-                  Fill this out and we'll handle it personally.
-                </p>
-
-                <div className="space-y-4">
-                  <div>
-                    <label
-                      className="block text-base font-semibold mb-2"
-                      style={{ color: "#fbbf24" }}
-                    >
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      value={ticketData.name}
-                      onChange={(e) =>
-                        setTicketData({ ...ticketData, name: e.target.value })
-                      }
-                      className="w-full px-4 py-3 rounded-lg focus:outline-none text-base"
-                      placeholder="John Doe"
-                      style={{
-                        background: "rgba(0, 0, 0, 0.5)",
-                        border: "2px solid rgba(217, 119, 6, 0.4)",
-                        color: "#f5f5f4",
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      className="block text-base font-semibold mb-2"
-                      style={{ color: "#fbbf24" }}
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={ticketData.email}
-                      onChange={(e) =>
-                        setTicketData({ ...ticketData, email: e.target.value })
-                      }
-                      className="w-full px-4 py-3 rounded-lg focus:outline-none text-base"
-                      placeholder="your.email@example.com"
-                      style={{
-                        background: "rgba(0, 0, 0, 0.5)",
-                        border: "2px solid rgba(217, 119, 6, 0.4)",
-                        color: "#f5f5f4",
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      className="block text-base font-semibold mb-2"
-                      style={{ color: "#fbbf24" }}
-                    >
-                      Phone (Optional)
-                    </label>
-                    <input
-                      type="tel"
-                      value={ticketData.phone}
-                      onChange={(e) =>
-                        setTicketData({ ...ticketData, phone: e.target.value })
-                      }
-                      className="w-full px-4 py-3 rounded-lg focus:outline-none text-base"
-                      placeholder="(555) 123-4567"
-                      style={{
-                        background: "rgba(0, 0, 0, 0.5)",
-                        border: "2px solid rgba(217, 119, 6, 0.4)",
-                        color: "#f5f5f4",
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      className="block text-base font-semibold mb-2"
-                      style={{ color: "#fbbf24" }}
-                    >
-                      How urgent is this?
-                    </label>
-                    <select
-                      value={ticketData.priority}
-                      onChange={(e) =>
-                        setTicketData({ ...ticketData, priority: e.target.value })
-                      }
-                      className="w-full px-4 py-3 rounded-lg focus:outline-none text-base"
-                      style={{
-                        background: "rgba(0, 0, 0, 0.5)",
-                        border: "2px solid rgba(217, 119, 6, 0.4)",
-                        color: "#f5f5f4",
-                      }}
-                    >
-                      <option value="low">Can wait a day or two</option>
-                      <option value="medium">Within 24 hours</option>
-                      <option value="high">Pretty urgent</option>
-                      <option value="urgent">ASAP - It's critical!</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      className="block text-base font-semibold mb-2"
-                      style={{ color: "#fbbf24" }}
-                    >
-                      What's the problem?
-                    </label>
-                    <textarea
-                      value={ticketData.issue}
-                      onChange={(e) =>
-                        setTicketData({ ...ticketData, issue: e.target.value })
-                      }
-                      rows={5}
-                      className="w-full px-4 py-3 rounded-lg focus:outline-none text-base"
-                      placeholder="Describe what's happening..."
-                      style={{
-                        background: "rgba(0, 0, 0, 0.5)",
-                        border: "2px solid rgba(217, 119, 6, 0.4)",
-                        color: "#f5f5f4",
-                      }}
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleTicketSubmit}
-                    className="w-full px-4 py-4 rounded-lg font-bold text-lg transition-all"
-                    style={{
-                      background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                      color: "#000",
-                      boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
-                    }}
-                  >
-                    Submit Request
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setShowTicket(false)}
-                    className="w-full px-4 py-3 font-semibold transition-colors"
-                    style={{ color: "#d97706" }}
-                  >
-                    Go Back
-                  </button>
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-black/40">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] p-4 rounded-2xl border ${m.role === 'user' ? 'bg-zinc-800 border-zinc-700' : 'bg-amber-900/10 border-amber-600/30 text-amber-50'}`}>
+                  {m.content}
                 </div>
               </div>
-            ) : (
-              <div className="space-y-4">
-                <div
-                  className="rounded-2xl shadow-2xl p-6"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.2) 100%)",
-                    border: "2px solid rgba(251, 191, 36, 0.5)",
-                    boxShadow: "0 0 30px rgba(251, 191, 36, 0.3)",
-                  }}
-                >
-                  <MessageSquare size={36} className="mb-3" style={{ color: "#fbbf24" }} />
-                  <h3 className="text-2xl font-bold mb-3" style={{ color: "#fbbf24" }}>
-                    How We Work
-                  </h3>
-                  <ul className="space-y-2 text-base font-medium" style={{ color: "#f5f5f4" }}>
-                    <li>• Tell us your tech problem</li>
-                    <li>• Get instant help from the HIT man</li>
-                    <li>• Still stuck? We'll handle it personally</li>
-                    <li>• Your tech troubles disappear</li>
-                  </ul>
-                </div>
+            ))}
+          </div>
 
-                <div
-                  className="rounded-2xl shadow-2xl p-6"
-                  style={{
-                    background: "rgba(0, 0, 0, 0.7)",
-                    border: "2px solid rgba(217, 119, 6, 0.4)",
-                    boxShadow: "0 0 30px rgba(217, 119, 6, 0.2)",
-                  }}
-                >
-                  <h3 className="font-bold mb-4 text-xl" style={{ color: "#fbbf24" }}>
-                    Common Problems We Fix
-                  </h3>
-                  <div className="space-y-2">
-                    {commonIssues.map((issue, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setInput(issue)}
-                        className="w-full text-left px-4 py-3 text-base rounded-lg transition-all font-medium"
-                        style={{
-                          background: "rgba(0, 0, 0, 0.5)",
-                          border: "1px solid rgba(217, 119, 6, 0.4)",
-                          color: "#f5f5f4",
-                        }}
-                      >
-                        {issue}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div
-                  className="rounded-2xl shadow-2xl p-6"
-                  style={{
-                    background: "rgba(0, 0, 0, 0.6)",
-                    border: "2px solid rgba(217, 119, 6, 0.3)",
-                  }}
-                >
-                  <h3 className="font-bold text-lg mb-2" style={{ color: "#fbbf24" }}>
-                    We're Here For You
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "#d97706" }}>
-                    No question is too simple. No problem is too small. We treat everyone
-                    like family and explain everything in plain English.
-                  </p>
-                </div>
-              </div>
-            )}
+          <div className="p-4 bg-zinc-900/80 border-t border-amber-600/20">
+            <div className="flex gap-2 mb-3">
+              <textarea 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                className="flex-1 bg-black border border-amber-600/40 rounded-xl p-3 focus:outline-none text-white placeholder:text-zinc-600" 
+                placeholder="Describe the technical failure..." 
+                rows={1} 
+              />
+              <button onClick={handleSend} className="bg-amber-500 hover:bg-amber-400 text-black px-6 rounded-xl font-bold transition-colors"><Send size={20}/></button>
+            </div>
+            <button onClick={() => setShowTicket(!showTicket)} className="w-full py-4 bg-amber-600 hover:bg-amber-500 text-black font-black rounded-xl transition-all flex items-center justify-center gap-2">
+              <Ticket size={20}/> {showTicket ? "CLOSE TICKET FORM" : "REQUEST PERSONAL HELP"}
+            </button>
           </div>
         </div>
-      </div>
 
-      <ChatWidget />
+        <div className="space-y-6">
+          {showTicket ? (
+            <form onSubmit={handleTicketSubmit} className="bg-zinc-900 border-2 border-amber-500 p-6 rounded-3xl animate-in fade-in slide-in-from-right-4">
+              <h3 className="text-xl font-black text-amber-400 mb-4 uppercase tracking-tighter">New Support Ticket</h3>
+              <input required className="w-full bg-black border border-zinc-700 p-3 rounded-lg mb-3 text-white" placeholder="Client Name" onChange={e => setTicketData({...ticketData, name: e.target.value})} />
+              <input required type="email" className="w-full bg-black border border-zinc-700 p-3 rounded-lg mb-3 text-white" placeholder="Email Address" onChange={e => setTicketData({...ticketData, email: e.target.value})} />
+              <textarea required className="w-full bg-black border border-zinc-700 p-3 rounded-lg mb-4 text-white" rows={5} placeholder="What needs fixing?" onChange={e => setTicketData({...ticketData, issue: e.target.value})} />
+              <button disabled={submittingTicket} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-black rounded-lg transition-all">
+                {submittingTicket ? "DISPATCHING..." : "DEPLOY TICKET"}
+              </button>
+            </form>
+          ) : (
+            <div className="bg-amber-900/10 border border-amber-600/30 p-8 rounded-3xl">
+              <MessageSquare size={40} className="text-amber-500 mb-4" />
+              <h3 className="text-2xl font-black text-amber-400 mb-4 uppercase tracking-tighter">Field Procedure</h3>
+              <ul className="space-y-6 text-zinc-300 font-medium">
+                <li className="flex gap-3 items-start"><span className="text-amber-500 font-black">01.</span> Brief the AI on your technical issue.</li>
+                <li className="flex gap-3 items-start"><span className="text-amber-500 font-black">02.</span> Apply the recommended fix immediately.</li>
+                <li className="flex gap-3 items-start"><span className="text-amber-500 font-black">03.</span> If issue persists, deploy a Ticket for a direct HIT.</li>
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
