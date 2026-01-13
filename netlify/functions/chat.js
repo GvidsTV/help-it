@@ -1,12 +1,15 @@
 ﻿const Anthropic = require('@anthropic-ai/sdk');
 
-// This uses the NEW name you set in Netlify
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
+  // 1. Log checking for the key (visible in Netlify Function logs)
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  
+  if (!apiKey) {
+    console.error("CRITICAL: ANTHROPIC_API_KEY is missing from environment variables.");
+    return { statusCode: 500, body: JSON.stringify({ error: "Missing API Key configuration." }) };
+  }
+
+  const anthropic = new Anthropic({ apiKey });
 
   try {
     const { message, history } = JSON.parse(event.body);
@@ -21,7 +24,7 @@ exports.handler = async (event) => {
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20240620",
       max_tokens: 1024,
-      system: "You are the 'HIT Man'. Helpful IT Man with a Mafia persona. Firm but professional.",
+      system: "You are the HIT Man. A tech-savvy Mafia Consigliere. Solve problems for the family.",
       messages: conversationHistory,
     });
 
@@ -31,10 +34,10 @@ exports.handler = async (event) => {
       body: JSON.stringify({ reply: response.content[0].text }),
     };
   } catch (error) {
-    console.error('Claude Error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "The line is tapped. Connection failed." }),
+    console.error("Claude API Error:", error.message);
+    return { 
+      statusCode: 500, 
+      body: JSON.stringify({ error: "The family is busy. Try again." }) 
     };
   }
 };
