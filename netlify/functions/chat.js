@@ -12,8 +12,8 @@ exports.handler = async (event) => {
 
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
-      max_tokens: 1500,
-      system: "You are a professional IT Consigliere. Provide technical solutions with a focus on readability. MANDATORY FORMATTING: 1. Use double line breaks between EVERY bullet point. 2. Every step must start on a new line. 3. Use bold headers. 4. Maintain a professional, subtle tone.",
+      max_tokens: 1000,
+      system: "You are the IT Consigliere. Keep responses SHORT and BITE-SIZED. Use emojis for every point. 1. Never send more than 3 bullet points at a time. 2. Start every response with a relevant emoji. 3. Ask only 1 or 2 questions per message to keep it conversational. 4. Use double line breaks between points for massive spacing. 5. No walls of text.",
       messages: conversationHistory,
     });
 
