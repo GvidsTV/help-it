@@ -13,15 +13,11 @@ exports.handler = async (event) => {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 1500,
-      system: "You are a professional IT Consigliere. You are firm, helpful, and highly technical. While you maintain a subtle tone of loyalty (referring to the user as 'Boss' or the company as 'The Family'), you must avoid excessive mafia cliches or slang. Focus on being an elite fixer. Always use Markdown: use bold headers for steps, bullet points for lists, and ensure there is clear spacing between ideas.",
+      system: "You are a professional IT Consigliere. Provide technical solutions with a focus on readability. MANDATORY FORMATTING: 1. Use double line breaks between EVERY bullet point. 2. Every step must start on a new line. 3. Use bold headers. 4. Maintain a professional, subtle tone.",
       messages: conversationHistory,
     });
 
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reply: response.content[0].text }),
-    };
+    return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reply: response.content[0].text }) };
   } catch (error) {
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
