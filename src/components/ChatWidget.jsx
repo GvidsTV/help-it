@@ -40,13 +40,12 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="chat-widget border-2 border-amber-600 rounded-xl bg-zinc-900 overflow-hidden flex flex-col h-[650px] w-full max-w-md mx-auto">
-      {/* Simplified Header with forced button visibility */}
-      <div className="p-4 bg-amber-600 flex justify-between items-center shrink-0 shadow-md">
+    <div className="chat-widget border-2 border-amber-600 rounded-xl bg-zinc-900 flex flex-col h-[650px] w-full max-w-md mx-auto overflow-hidden">
+      <div className="p-4 bg-amber-600 flex justify-between items-center shrink-0">
         <span className="text-black font-black uppercase text-xs">Help IT - Secure</span>
-        <div className="flex gap-6">
-          <button onClick={downloadTranscript} className="text-black font-bold text-2xl" style={{cursor: 'pointer'}}>📥</button>
-          <button onClick={() => window.confirm("Wipe?") && setMessages(initialState)} className="text-black font-bold text-2xl" style={{cursor: 'pointer'}}>🗑️</button>
+        <div className="flex gap-4">
+          <button onClick={downloadTranscript} className="text-black font-bold text-xs border border-black px-2 py-1 rounded hover:bg-black hover:text-amber-600 transition-colors">SAVE</button>
+          <button onClick={() => window.confirm("Wipe?") && setMessages(initialState)} className="text-black font-bold text-xs border border-black px-2 py-1 rounded hover:bg-black hover:text-amber-600 transition-colors">WIPE</button>
         </div>
       </div>
       
@@ -64,7 +63,7 @@ export default function ChatWidget() {
 
       <div className="p-4 bg-zinc-900 flex gap-2 border-t border-amber-900">
         <input className="flex-1 bg-black text-white p-3 rounded border border-zinc-700 outline-none" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()} />
-        <button className="bg-amber-600 px-4 rounded text-black font-bold" onClick={sendMessage} disabled={loading}>GO</button>
+        <button className="bg-amber-600 px-4 rounded text-black font-bold" onClick={sendMessage} disabled={loading}>SEND</button>
       </div>
     </div>
   );
