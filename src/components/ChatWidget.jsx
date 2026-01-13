@@ -1,5 +1,4 @@
 ﻿import React, { useState, useRef, useEffect } from "react";
-import { Trash2, Send, Loader2, FileDown } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 export default function ChatWidget() {
@@ -16,7 +15,6 @@ export default function ChatWidget() {
       const role = msg.role === "user" ? "YOU" : "THE HIT MAN";
       return `[${role}]: ${msg.content}\n`;
     }).join("\n---\n\n");
-    
     const element = document.createElement("a");
     const file = new Blob([fileContent], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
@@ -48,15 +46,15 @@ export default function ChatWidget() {
 
   return (
     <div className="chat-widget shadow-2xl border border-amber-600/30 rounded-2xl bg-zinc-900 overflow-hidden flex flex-col h-[650px] w-full max-w-md mx-auto">
-      {/* Fixed Header with visible flex icons */}
+      {/* Header with Standard Symbols */}
       <div className="p-4 bg-amber-600 flex justify-between items-center shadow-lg shrink-0">
-        <span className="text-black font-black uppercase text-xs tracking-widest italic truncate">Help IT - Secure Line</span>
-        <div className="flex items-center gap-3">
-          <button onClick={downloadTranscript} className="text-black hover:opacity-70 transition-opacity p-1" title="Download Briefing">
-            <FileDown size={20} strokeWidth={2.5} />
+        <span className="text-black font-black uppercase text-xs tracking-widest italic">Help IT - Secure Line</span>
+        <div className="flex items-center gap-4">
+          <button onClick={downloadTranscript} className="text-black text-xl hover:opacity-60 transition-opacity" title="Download Briefing">
+            📥
           </button>
-          <button onClick={() => window.confirm("Wipe the record?") && setMessages(initialState)} className="text-black hover:opacity-70 transition-opacity p-1" title="Wipe Record">
-            <Trash2 size={20} strokeWidth={2.5} />
+          <button onClick={() => window.confirm("Wipe the record?") && setMessages(initialState)} className="text-black text-xl hover:opacity-60 transition-opacity" title="Wipe Record">
+            🗑️
           </button>
         </div>
       </div>
@@ -69,7 +67,7 @@ export default function ChatWidget() {
                 ? "bg-amber-600 text-black font-bold border-b-4 border-amber-800" 
                 : "bg-zinc-800 text-amber-50 border border-amber-500/20"
             }`}>
-              <ReactMarkdown className="prose prose-invert prose-amber max-w-none">
+              <ReactMarkdown className="markdown-body">
                 {msg.content}
               </ReactMarkdown>
             </div>
@@ -77,7 +75,7 @@ export default function ChatWidget() {
         ))}
         {loading && (
           <div className="flex justify-start items-center gap-3 p-2">
-            <Loader2 className="animate-spin text-amber-500" size={18} />
+            <span className="text-amber-500 animate-spin text-lg">⏳</span>
             <span className="text-amber-500 text-[10px] uppercase font-black tracking-widest animate-pulse">Securing encryption...</span>
           </div>
         )}
@@ -87,7 +85,9 @@ export default function ChatWidget() {
       <div className="p-4 bg-zinc-900 border-t border-amber-600/20">
         <div className="flex gap-2">
           <input className="flex-1 bg-black border border-zinc-700 rounded-xl p-4 text-white text-sm outline-none focus:ring-2 focus:ring-amber-500" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()} placeholder="Describe the situation..." />
-          <button className="bg-amber-600 p-4 rounded-xl text-black font-bold hover:bg-amber-500 transition-all disabled:opacity-30" onClick={sendMessage} disabled={loading}><Send size={20} /></button>
+          <button className="bg-amber-600 p-4 rounded-xl text-black font-bold text-lg hover:bg-amber-500 transition-all disabled:opacity-30" onClick={sendMessage} disabled={loading}>
+            ➤
+          </button>
         </div>
       </div>
     </div>
