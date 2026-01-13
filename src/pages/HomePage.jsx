@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
+  // --- State ---
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -31,6 +32,7 @@ export default function HomePage() {
 
   const messagesEndRef = useRef(null);
 
+  // --- Auto-scroll to bottom ---
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -39,6 +41,7 @@ export default function HomePage() {
     scrollToBottom();
   }, [messages]);
 
+  // --- Core Chat Logic with Memory ---
   const handleSend = async () => {
     if (!input.trim() || loading) return;
 
@@ -47,22 +50,30 @@ export default function HomePage() {
       content: input.trim(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    // 1. Add user message to UI immediately
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    
+    const messageToSend = input.trim();
     setInput("");
     setLoading(true);
 
     try {
+      // 2. Send current message AND history to your Netlify function
       const response = await fetch("/.netlify/functions/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: userMessage.content,
+          message: messageToSend,
+          // We send the last 10 messages so the HIT Man remembers the context
+          history: updatedMessages.slice(-10), 
         }),
       });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data?.error || "Connection lost");
 
+      // 3. Add AI response to UI
       setMessages((prev) => [
         ...prev, 
         { role: "assistant", content: data?.reply || "I've handled it." }
@@ -114,8 +125,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-amber-500 selection:text-black">
+      {/* Background Glow */}
       <div className="fixed inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-600 via-transparent to-transparent z-0" />
 
+      {/* Banner */}
       {showBanner && (
         <div className="relative z-50 bg-amber-900/30 border-b border-amber-600/30 p-3 flex justify-between items-center">
           <p className="text-amber-400 text-sm flex items-center gap-2">
@@ -125,6 +138,7 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* Header */}
       <header className="relative z-10 border-b-2 border-amber-600/30 bg-black/90 py-8 shadow-[0_4px_20px_rgba(217,119,6,0.2)]">
         <div className="max-w-7xl mx-auto px-4 text-center">
            <h1 className="text-5xl font-black tracking-tighter text-amber-500 uppercase italic">Help IT</h1>
@@ -133,8 +147,10 @@ export default function HomePage() {
       </header>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Chat Widget Container */}
         <div className="lg:col-span-2">
           <div className="bg-zinc-900/80 border-2 border-amber-600/40 rounded-3xl overflow-hidden flex flex-col h-[700px] shadow-2xl shadow-amber-900/20">
+            {/* Chat Header */}
             <div className="p-4 bg-gradient-to-r from-amber-600/20 to-transparent border-b border-amber-600/30 flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/50">
                 <User size={24} className="text-black" />
@@ -145,6 +161,7 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-black/40">
               {messages.map((msg, idx) => (
                 <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -160,11 +177,12 @@ export default function HomePage() {
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Input Area */}
             <div className="p-4 border-t border-amber-600/30 bg-zinc-900/90">
               <div className="flex gap-2">
                  <textarea 
                    className="flex-1 bg-black border border-amber-600/40 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500"
-                   placeholder="Type your problem..."
+                   placeholder="Tell the HIT Man your problem..."
                    value={input}
                    onChange={(e) => setInput(e.target.value)}
                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
@@ -181,6 +199,7 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Sidebar */}
         <div className="space-y-6">
           <button 
             onClick={() => setShowTicket(!showTicket)}

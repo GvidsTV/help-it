@@ -1,80 +1,47 @@
-export async function handler(event) {
+const Anthropic = require('@anthropic-ai/sdk');
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+exports.handler = async (event) => {
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  }
+
   try {
-    if (event.httpMethod !== "POST") {
-      return {
-        statusCode: 405,
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ error: "Method not allowed" }),
-      };
-    }
+    const { message, history } = JSON.parse(event.body);
 
-    const { message } = JSON.parse(event.body || "{}");
-    if (!message || typeof message !== "string") {
-      return {
-        statusCode: 400,
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ reply: "No message received." }),
-      };
-    }
+    // 1. Format the history for Claude's API
+    // Claude needs an array of {role: "user" | "assistant", content: "..."}
+    const conversationHistory = (history || []).map(msg => ({
+      role: msg.role === 'assistant' ? 'assistant' : 'user',
+      content: msg.content
+    }));
 
-    const apiKey = process.env.CLAUDE_API_KEY;
-    if (!apiKey) {
-      return {
-        statusCode: 500,
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ reply: "Missing CLAUDE_API_KEY in server env." }),
-      };
-    }
-
-    // Call Anthropic Messages API
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        // Version header required by Anthropic-compatible APIs (commonly used)
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 300,
-        messages: [{ role: "user", content: message }],
-      }),
+    // 2. Append the latest user message
+    conversationHistory.push({
+      role: "user",
+      content: message
     });
 
-    const data = await resp.json().catch(() => null);
-
-    if (!resp.ok) {
-      // Return useful debug info without crashing the function
-      return {
-        statusCode: 500,
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          reply: "The Consigliere had trouble responding. Try again.",
-          details: data || { error: `HTTP ${resp.status}` },
-        }),
-      };
-    }
-
-    // Anthropic response usually: { content: [{ type:"text", text:"..." }], ... }
-    const text =
-      data?.content?.find((c) => c.type === "text")?.text ??
-      data?.content?.[0]?.text ??
-      null;
+    // 3. Call Claude with the full context
+    const msg = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20240620",
+      max_tokens: 1024,
+      system: "You are the 'HIT Man' (Help IT Man). You have a helpful but firm Mafia/Italian-American vibe. You solve tech problems for 'The Family'. Keep it professional but stay in character.",
+      messages: conversationHistory,
+    });
 
     return {
       statusCode: 200,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ reply: text || "No reply returned." }),
+      body: JSON.stringify({ reply: msg.content[0].text }),
     };
-  } catch (err) {
+  } catch (error) {
+    console.error('Claude Error:', error);
     return {
       statusCode: 500,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        reply: "System error. Try again.",
-        error: String(err?.message || err),
-      }),
+      body: JSON.stringify({ error: "The HIT Man is busy. Try again later." }),
     };
   }
-}
+};
