@@ -1,8 +1,47 @@
-﻿import React, { useState, useRef, useEffect } from "react";
+# 1. Update Backend (chat.js) with Claude 4.5
+Write-Host "--- Updating Backend to Claude 4.5 ---" -ForegroundColor Cyan
+$chatJS = @'
+const Anthropic = require('@anthropic-ai/sdk');
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+exports.handler = async (event) => {
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
+  try {
+    const { message, history } = JSON.parse(event.body);
+    const conversationHistory = (history || []).map(msg => ({
+      role: msg.role === 'assistant' ? 'assistant' : 'user',
+      content: msg.content
+    }));
+    conversationHistory.push({ role: "user", content: message });
+
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-5-20250929", 
+      max_tokens: 1024,
+      system: "You are the 'HIT Man'. A tech-savvy Mafia Consigliere. Be helpful, firm, and solve IT problems for the family.",
+      messages: conversationHistory,
+    });
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reply: response.content[0].text }),
+    };
+  } catch (error) {
+    console.error('Claude API Error:', error.message);
+    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+  }
+};
+'@
+$chatJS | Out-File -FilePath "netlify/functions/chat.js" -Encoding utf8
+
+# 2. Update Frontend (ChatWidget.jsx) with Loading Spinner
+Write-Host "--- Updating Frontend UI ---" -ForegroundColor Cyan
+$widgetJSX = @'
+import React, { useState, useRef, useEffect } from "react";
 import { Trash2, Send, Loader2 } from "lucide-react";
 
 export default function ChatWidget() {
-  const initialState = [{ role: "assistant", content: "ðŸ•¶ï¸ Iâ€™m The Consigliere. Tell me your IT problem." }];
+  const initialState = [{ role: "assistant", content: "🕶️ I’m The Consigliere. Tell me your IT problem." }];
   const [messages, setMessages] = useState(initialState);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,7 +72,7 @@ export default function ChatWidget() {
       if (!res.ok) throw new Error(data.error);
       setMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
     } catch (err) {
-      setMessages(prev => [...prev, { role: "assistant", content: "âš ï¸ Line disconnected. The family is unreachable." }]);
+      setMessages(prev => [...prev, { role: "assistant", content: "⚠️ Line disconnected. The family is unreachable." }]);
     } finally { setLoading(false); }
   };
 
@@ -64,3 +103,13 @@ export default function ChatWidget() {
     </div>
   );
 }
+'@
+$widgetJSX | Out-File -FilePath "src/components/ChatWidget.jsx" -Encoding utf8
+
+# 3. Deploy
+Write-Host "--- Pushing to GitHub/Netlify ---" -ForegroundColor Cyan
+git add .
+git commit -m "feat: implement Claude 4.5 with UI loading spinner"
+git push origin master
+
+Write-Host "--- Done! Wait for Netlify build to complete. ---" -ForegroundColor Green

@@ -12,7 +12,7 @@ exports.handler = async (event) => {
     conversationHistory.push({ role: "user", content: message });
 
     const response = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-latest",
+      model: "claude-sonnet-4-5-20250929", 
       max_tokens: 1024,
       system: "You are the 'HIT Man'. A tech-savvy Mafia Consigliere. Be helpful, firm, and solve IT problems for the family.",
       messages: conversationHistory,
@@ -25,6 +25,6 @@ exports.handler = async (event) => {
     };
   } catch (error) {
     console.error('Claude API Error:', error.message);
-    return { statusCode: 500, body: JSON.stringify({ error: "The connection is pinched." }) };
+    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
 };
