@@ -1,5 +1,5 @@
 ﻿import React, { useState, useRef, useEffect } from "react";
-import { Trash2, Send, Loader2 } from "lucide-react";
+import { Trash2, Send, Loader2, Download } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 export default function ChatWidget() {
@@ -10,6 +10,21 @@ export default function ChatWidget() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  // --- Logic to Download Transcript ---
+  const downloadTranscript = () => {
+    const fileContent = messages.map(msg => {
+      const role = msg.role === "user" ? "YOU" : "THE HIT MAN";
+      return `[${role}]: ${msg.content}\n`;
+    }).join("\n---\n\n");
+    
+    const element = document.createElement("a");
+    const file = new Blob([fileContent], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = "HIT_MAN_BRIEFING.txt";
+    document.body.appendChild(element);
+    element.click();
+  };
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -33,12 +48,20 @@ export default function ChatWidget() {
 
   return (
     <div className="chat-widget shadow-2xl border border-amber-600/30 rounded-2xl bg-zinc-900 overflow-hidden flex flex-col h-[650px] w-full max-w-md mx-auto">
+      {/* Header with Download and Trash Buttons */}
       <div className="p-4 bg-amber-600 flex justify-between items-center shadow-lg">
-        <span className="text-black font-black uppercase text-xs tracking-widest italic">Help IT - Internal Line</span>
-        <button onClick={() => window.confirm("Wipe the record?") && setMessages(initialState)} className="text-black hover:scale-110 transition-transform"><Trash2 size={20} /></button>
+        <span className="text-black font-black uppercase text-xs tracking-widest italic">Help IT - Secure Line</span>
+        <div className="flex gap-4">
+          <button onClick={downloadTranscript} className="text-black hover:scale-110 transition-transform" title="Download Briefing">
+            <Download size={20} />
+          </button>
+          <button onClick={() => window.confirm("Wipe the record?") && setMessages(initialState)} className="text-black hover:scale-110 transition-transform" title="Wipe Record">
+            <Trash2 size={20} />
+          </button>
+        </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-black/40 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-black/40">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div className={`max-w-[92%] p-5 rounded-2xl text-sm leading-relaxed shadow-xl ${
