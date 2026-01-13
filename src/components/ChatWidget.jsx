@@ -1,5 +1,5 @@
 ﻿import React, { useState, useRef, useEffect } from "react";
-import { Trash2, Send, Loader2, Download } from "lucide-react";
+import { Trash2, Send, Loader2, FileDown } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 export default function ChatWidget() {
@@ -11,7 +11,6 @@ export default function ChatWidget() {
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-  // --- Logic to Download Transcript ---
   const downloadTranscript = () => {
     const fileContent = messages.map(msg => {
       const role = msg.role === "user" ? "YOU" : "THE HIT MAN";
@@ -24,12 +23,13 @@ export default function ChatWidget() {
     element.download = "HIT_MAN_BRIEFING.txt";
     document.body.appendChild(element);
     element.click();
+    document.body.removeChild(element);
   };
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
     const userMessage = { role: "user", content: input.trim() };
-    setMessages([...messages, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput("");
     setLoading(true);
 
@@ -48,15 +48,15 @@ export default function ChatWidget() {
 
   return (
     <div className="chat-widget shadow-2xl border border-amber-600/30 rounded-2xl bg-zinc-900 overflow-hidden flex flex-col h-[650px] w-full max-w-md mx-auto">
-      {/* Header with Download and Trash Buttons */}
-      <div className="p-4 bg-amber-600 flex justify-between items-center shadow-lg">
-        <span className="text-black font-black uppercase text-xs tracking-widest italic">Help IT - Secure Line</span>
-        <div className="flex gap-4">
-          <button onClick={downloadTranscript} className="text-black hover:scale-110 transition-transform" title="Download Briefing">
-            <Download size={20} />
+      {/* Fixed Header with visible flex icons */}
+      <div className="p-4 bg-amber-600 flex justify-between items-center shadow-lg shrink-0">
+        <span className="text-black font-black uppercase text-xs tracking-widest italic truncate">Help IT - Secure Line</span>
+        <div className="flex items-center gap-3">
+          <button onClick={downloadTranscript} className="text-black hover:opacity-70 transition-opacity p-1" title="Download Briefing">
+            <FileDown size={20} strokeWidth={2.5} />
           </button>
-          <button onClick={() => window.confirm("Wipe the record?") && setMessages(initialState)} className="text-black hover:scale-110 transition-transform" title="Wipe Record">
-            <Trash2 size={20} />
+          <button onClick={() => window.confirm("Wipe the record?") && setMessages(initialState)} className="text-black hover:opacity-70 transition-opacity p-1" title="Wipe Record">
+            <Trash2 size={20} strokeWidth={2.5} />
           </button>
         </div>
       </div>
