@@ -1,0 +1,100 @@
+import React, { useEffect, useState } from 'react';
+import { CheckCircle, Shield, MessageSquare, Phone, ArrowRight, Star, Crown } from 'lucide-react';
+
+const WelcomePage = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <div className="min-h-screen text-white font-sans selection:bg-amber-500 selection:text-black flex flex-col items-center justify-center p-4" 
+         style={{ background: "radial-gradient(circle at center, #1a0f0a 0%, #000000 80%)" }}>
+      
+      {/* Background Ambient Glow */}
+      <div className="fixed inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_50%_50%,_#d97706_0%,_transparent_50%)]" />
+
+      <div className={`max-w-3xl w-full transition-all duration-1000 transform ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        
+        {/* Success Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-500/10 border-2 border-amber-500 mb-6 shadow-[0_0_30px_rgba(245,158,11,0.3)]">
+            <CheckCircle size={40} className="text-amber-500" />
+          </div>
+          <h1 className="text-5xl font-black tracking-tighter uppercase italic mb-4">
+            Payment <span className="text-amber-500">Confirmed</span>
+          </h1>
+          <p className="text-xl text-zinc-400 font-medium">
+            Welcome to the inner circle. The HIT Man is now on your side.
+          </p>
+        </div>
+
+        {/* Next Steps Card */}
+        <div className="bg-zinc-900/50 border-2 border-amber-600/30 rounded-3xl p-8 backdrop-blur-md shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Shield size={120} className="text-amber-500" />
+          </div>
+
+          <h2 className="text-2xl font-bold text-amber-500 mb-6 flex items-center gap-2">
+            What Happens Now?
+          </h2>
+
+          <div className="space-y-8 relative z-10">
+            {/* Step 1 */}
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center font-black">1</div>
+              <div>
+                <h3 className="text-lg font-bold text-white uppercase">Check Your Inbox</h3>
+                <p className="text-zinc-400">You'll receive a confirmation email from PayPal and a welcome briefing from the HIT Man within the next 15 minutes.</p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center font-black">2</div>
+              <div>
+                <h3 className="text-lg font-bold text-white uppercase">Initialize Support</h3>
+                <p className="text-zinc-400">Head back to the homepage and use the AI Consigliere. Your status is now elevated—human operators will see your requests as high priority.</p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center font-black">3</div>
+              <div>
+                <h3 className="text-lg font-bold text-white uppercase">Direct Contact (Dons Only)</h3>
+                <p className="text-zinc-400">If you subscribed as a Don, your dedicated phone line and text-support number will be sent to your email shortly.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Links */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+          <a href="/" className="flex items-center justify-between p-4 bg-zinc-800/50 border border-zinc-700 rounded-xl hover:border-amber-500 transition-colors group">
+            <div className="flex items-center gap-3">
+              <MessageSquare className="text-amber-500" />
+              <span className="font-bold">Back to Chat</span>
+            </div>
+            <ArrowRight size={18} className="text-zinc-500 group-hover:translate-x-1 transition-transform" />
+          </a>
+          <button onClick={() => window.print()} className="flex items-center justify-between p-4 bg-zinc-800/50 border border-zinc-700 rounded-xl hover:border-amber-500 transition-colors group">
+            <div className="flex items-center gap-3">
+              <Shield className="text-amber-500" />
+              <span className="font-bold">Print Receipt</span>
+            </div>
+            <ArrowRight size={18} className="text-zinc-500 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+
+        {/* Footer Guarantee */}
+        <p className="text-center mt-12 text-zinc-600 text-sm uppercase tracking-[0.2em] font-bold">
+          The HIT Man Guarantee: Your problems disappear, or we make it right.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default WelcomePage;
