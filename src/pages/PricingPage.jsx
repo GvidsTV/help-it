@@ -1,5 +1,24 @@
 import React, { useState } from "react";
-import { Check, X, Phone, Mail, Zap, Shield, Clock, Wrench, Code, Crown, ArrowRight } from "lucide-react";
+import { Check, X, Zap, Shield, Clock, Wrench, Code, Crown, ArrowRight } from "lucide-react";
+
+// YOUR OFFICIAL PAYPAL LINKS MAPPING
+const PAYPAL_LINKS = {
+  subscriptions: {
+    mademan: {
+      monthly: "https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-8MY58314S2792274UNFMGPGY",
+      annual: "https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-0CR03041BB631015PNFVNZZI"
+    },
+    don: {
+      monthly: "https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-9CB76842GW6811206NFMGRPI",
+      annual: "https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-6X93734796458100DNFVNZCY"
+    }
+  },
+  oneTime: {
+    quickHit: "https://www.paypal.com/ncp/payment/ABDSZQ9DUARHJ",
+    standardJob: "https://www.paypal.com/ncp/payment/WZJK7BRRRSB8W",
+    heavyOp: "https://www.paypal.com/ncp/payment/YMHWTE7XG6TPU"
+  }
+};
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState("monthly");
@@ -24,7 +43,7 @@ export default function PricingPage() {
       ],
       scope: "AI diagnosis only - no hands-on fixes",
       cta: "Start Free",
-      ctaLink: "/",
+      ctaLink: "/", // Free tier stays on site
       popular: false,
     },
     {
@@ -45,15 +64,12 @@ export default function PricingPage() {
         { text: "Phone/tablet basic support", included: true },
         { text: "Slow computer optimization", included: true },
         { text: "Remote support sessions", included: true },
-        { text: "Video call troubleshooting", included: true },
         { text: "24-48 hour response time", included: true },
         { text: "Web development", included: false },
-        { text: "Custom automation", included: false },
-        { text: "Priority access", included: false },
       ],
       scope: "Standard IT fixes only - no development work",
       cta: "Get Made Man",
-      ctaLink: "#contact",
+      ctaLink: billingCycle === "monthly" ? PAYPAL_LINKS.subscriptions.mademan.monthly : PAYPAL_LINKS.subscriptions.mademan.annual,
       popular: true,
     },
     {
@@ -71,8 +87,6 @@ export default function PricingPage() {
         { text: "Priority response (same-day)", included: true },
         { text: "Web development included", included: true },
         { text: "Custom automation & scripts", included: true },
-        { text: "API integrations", included: true },
-        { text: "Database work", included: true },
         { text: "Advanced troubleshooting", included: true },
         { text: "Dedicated phone line", included: true },
         { text: "Text message support", included: true },
@@ -81,7 +95,7 @@ export default function PricingPage() {
       ],
       scope: "Full IT + development + priority access",
       cta: "Become The Don",
-      ctaLink: "#contact",
+      ctaLink: billingCycle === "monthly" ? PAYPAL_LINKS.subscriptions.don.monthly : PAYPAL_LINKS.subscriptions.don.annual,
       popular: false,
       premium: true,
     },
@@ -92,114 +106,44 @@ export default function PricingPage() {
       name: "Quick Hit",
       price: 69,
       description: "Simple fixes under 30 minutes",
-      examples: ["Password reset", "Email configuration", "Basic WiFi setup", "Software installation"],
+      examples: ["Password reset", "Email setup", "Software install"],
       icon: Zap,
+      ctaLink: PAYPAL_LINKS.oneTime.quickHit
     },
     {
       name: "Standard Job",
       price: 99,
       description: "Most common IT problems",
-      examples: ["Virus removal", "Printer troubleshooting", "Phone backup", "Computer optimization"],
+      examples: ["Virus removal", "Printer fix", "PC optimization"],
       icon: Wrench,
+      ctaLink: PAYPAL_LINKS.oneTime.standardJob
     },
     {
       name: "Heavy Operation",
       price: 199,
       description: "Complex multi-step fixes",
-      examples: ["Data recovery", "Network setup", "System migration", "Advanced security"],
+      examples: ["Data recovery", "Network setup", "System migration"],
       icon: Shield,
+      ctaLink: PAYPAL_LINKS.oneTime.heavyOp
     },
   ];
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: "radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)",
-        position: "relative",
-      }}
-    >
-      {/* SEO-optimized meta content */}
-      <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Product",
-          "name": "Help IT Tech Support Services",
-          "description": "Affordable IT support for everyday people. AI diagnosis, remote support, and expert help starting at $49/month.",
-          "offers": [
-            {
-              "@type": "Offer",
-              "name": "Associate - Free AI Diagnosis",
-              "price": "0",
-              "priceCurrency": "USD"
-            },
-            {
-              "@type": "Offer",
-              "name": "Made Man - Standard IT Support",
-              "price": "49",
-              "priceCurrency": "USD",
-              "billingIncrement": "P1M"
-            },
-            {
-              "@type": "Offer",
-              "name": "Don - Premium IT + Development",
-              "price": "299",
-              "priceCurrency": "USD",
-              "billingIncrement": "P1M"
-            }
-          ]
-        })}
-      </script>
-
-      {/* Background glow */}
-      <div
-        style={{
-          position: "fixed",
-          top: "-50%",
-          left: "-50%",
-          width: "200%",
-          height: "200%",
-          background: "radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)",
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-
-      {/* Header */}
-      
+    <div className="min-h-screen" style={{ background: "radial-gradient(ellipse at center, #1a0f0a 0%, #000000 70%)", position: "relative" }}>
+      <div style={{ position: "fixed", top: "-50%", left: "-50%", width: "200%", height: "200%", background: "radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-12">
-        {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4" style={{ color: "#fbbf24" }}>
-            Tech Support For Real People
-          </h1>
-          <p className="text-xl mb-6" style={{ color: "#d97706" }}>
-            No IT department? No problem. Choose your level of access to The HIT Man.
-          </p>
+          <h1 className="text-5xl font-bold mb-4" style={{ color: "#fbbf24" }}>Tech Support For Real People</h1>
+          <p className="text-xl mb-6" style={{ color: "#d97706" }}>Choose your level of access to The HIT Man.</p>
           
-          {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4 mb-8">
-            <button
-              onClick={() => setBillingCycle("monthly")}
-              className="px-6 py-2 rounded-lg font-semibold transition-all"
-              style={{
-                background: billingCycle === "monthly" ? "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)" : "rgba(120, 113, 108, 0.3)",
-                color: billingCycle === "monthly" ? "#000" : "#fbbf24",
-                border: "2px solid " + (billingCycle === "monthly" ? "#fbbf24" : "rgba(217, 119, 6, 0.4)"),
-              }}
-            >
+            <button onClick={() => setBillingCycle("monthly")} className="px-6 py-2 rounded-lg font-semibold transition-all"
+              style={{ background: billingCycle === "monthly" ? "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)" : "rgba(120, 113, 108, 0.3)", color: billingCycle === "monthly" ? "#000" : "#fbbf24", border: "2px solid #fbbf24" }}>
               Monthly
             </button>
-            <button
-              onClick={() => setBillingCycle("annual")}
-              className="px-6 py-2 rounded-lg font-semibold transition-all"
-              style={{
-                background: billingCycle === "annual" ? "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)" : "rgba(120, 113, 108, 0.3)",
-                color: billingCycle === "annual" ? "#000" : "#fbbf24",
-                border: "2px solid " + (billingCycle === "annual" ? "#fbbf24" : "rgba(217, 119, 6, 0.4)"),
-              }}
-            >
+            <button onClick={() => setBillingCycle("annual")} className="px-6 py-2 rounded-lg font-semibold transition-all"
+              style={{ background: billingCycle === "annual" ? "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)" : "rgba(120, 113, 108, 0.3)", color: billingCycle === "annual" ? "#000" : "#fbbf24", border: "2px solid #fbbf24" }}>
               Annual (Save 20%)
             </button>
           </div>
@@ -210,463 +154,54 @@ export default function PricingPage() {
           {tiers.map((tier) => {
             const Icon = tier.icon;
             return (
-              <div
-                key={tier.id}
-                className="rounded-2xl p-8 relative"
-                style={{
-                  background: tier.gradient,
-                  border: tier.popular ? "3px solid #fbbf24" : "2px solid rgba(217, 119, 6, 0.4)",
-                  boxShadow: tier.popular ? "0 0 40px rgba(251, 191, 36, 0.3)" : "0 0 20px rgba(217, 119, 6, 0.2)",
-                }}
-              >
-                {tier.popular && (
-                  <div
-                    className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-full font-bold"
-                    style={{
-                      background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                      color: "#000",
-                    }}
-                  >
-                    MOST POPULAR
+              <div key={tier.id} className="rounded-2xl p-8 relative flex flex-col justify-between" style={{ background: tier.gradient, border: tier.popular ? "3px solid #fbbf24" : "2px solid rgba(217, 119, 6, 0.4)" }}>
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <Icon size={32} style={{ color: tier.color }} />
+                    <h3 className="text-2xl font-bold" style={{ color: "#fbbf24" }}>{tier.name}</h3>
                   </div>
-                )}
-
-                <div className="flex items-center gap-3 mb-4">
-                  <Icon size={32} style={{ color: tier.color }} />
-                  <div>
-                    <h3 className="text-2xl font-bold" style={{ color: "#fbbf24" }}>
-                      {tier.name}
-                    </h3>
-                    <p className="text-sm" style={{ color: "#d97706" }}>
-                      {tier.tagline}
-                    </p>
+                  <div className="mb-6">
+                    <span className="text-5xl font-bold" style={{ color: "#fbbf24" }}>${tier.price}</span>
+                    {tier.price > 0 && <span style={{ color: "#d97706" }}>/{billingCycle === "monthly" ? "mo" : "yr"}</span>}
                   </div>
+                  <ul className="space-y-3 mb-8">
+                    {tier.features.map((f, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        {f.included ? <Check size={20} style={{ color: "#10b981" }} /> : <X size={20} style={{ color: "#78716c" }} />}
+                        <span style={{ color: f.included ? "#f5f5f4" : "#78716c" }}>{f.text}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-
-                <div className="mb-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold" style={{ color: "#fbbf24" }}>
-                      ${tier.price}
-                    </span>
-                    {tier.price > 0 && (
-                      <span style={{ color: "#d97706" }}>
-                        /{billingCycle === "monthly" ? "mo" : "yr"}
-                      </span>
-                    )}
-                  </div>
-                  {tier.savings && (
-                    <p className="text-sm mt-1" style={{ color: "#10b981" }}>
-                      {tier.savings}
-                    </p>
-                  )}
-                </div>
-
-                <div className="mb-6">
-                  <p
-                    className="text-sm font-semibold mb-4 p-3 rounded-lg"
-                    style={{
-                      background: "rgba(217, 119, 6, 0.2)",
-                      color: "#fbbf24",
-                      border: "1px solid rgba(217, 119, 6, 0.4)",
-                    }}
-                  >
-                    {tier.scope}
-                  </p>
-                </div>
-
-                <ul className="space-y-3 mb-8">
-                  {tier.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      {feature.included ? (
-                        <Check size={20} style={{ color: "#10b981", flexShrink: 0 }} />
-                      ) : (
-                        <X size={20} style={{ color: "#78716c", flexShrink: 0 }} />
-                      )}
-                      <span
-                        style={{
-                          color: feature.included ? "#f5f5f4" : "#78716c",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {feature.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                <a
-                  href={tier.ctaLink}
-                  className="block w-full text-center px-6 py-4 rounded-lg font-bold transition-all"
-                  style={{
-                    background: tier.premium
-                      ? "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)"
-                      : tier.popular
-                      ? "linear-gradient(135deg, #d97706 0%, #92400e 100%)"
-                      : "rgba(120, 113, 108, 0.5)",
-                    color: tier.id === "associate" ? "#fbbf24" : "#000",
-                    border: "2px solid " + tier.color,
-                    boxShadow: tier.popular || tier.premium ? "0 0 20px rgba(251, 191, 36, 0.3)" : "none",
-                  }}
-                >
-                  {tier.cta}
-                </a>
+                <a href={tier.ctaLink} target="_blank" rel="noopener noreferrer" className="block w-full text-center px-6 py-4 rounded-lg font-bold"
+                  style={{ background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)", color: "#000" }}>{tier.cta}</a>
               </div>
             );
           })}
         </div>
 
-        {/* Pay-Per-Fix Section */}
-        <div className="mb-16">
-          <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold mb-3" style={{ color: "#fbbf24" }}>
-              Don't Need a Subscription?
-            </h2>
-            <p className="text-xl" style={{ color: "#d97706" }}>
-              Pay only for what you need — one problem at a time.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {payPerFix.map((option) => {
-              const Icon = option.icon;
-              return (
-                <div
-                  key={option.name}
-                  className="rounded-xl p-6"
-                  style={{
-                    background: "rgba(0, 0, 0, 0.7)",
-                    border: "2px solid rgba(217, 119, 6, 0.4)",
-                  }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <Icon size={28} style={{ color: "#fbbf24" }} />
-                    <h3 className="text-2xl font-bold" style={{ color: "#fbbf24" }}>
-                      {option.name}
-                    </h3>
-                  </div>
-
-                  <p className="text-3xl font-bold mb-2" style={{ color: "#fbbf24" }}>
-                    ${option.price}
-                  </p>
-                  <p className="text-sm mb-4" style={{ color: "#d97706" }}>
-                    {option.description}
-                  </p>
-
-                  <ul className="space-y-2">
-                    {option.examples.map((example, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <Check size={16} style={{ color: "#10b981" }} />
-                        <span style={{ color: "#f5f5f4", fontSize: "14px" }}>{example}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="text-center mt-8">
-            <a
-              href="/contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold transition-all"
-              style={{
-                background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                color: "#000",
-                boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
-              }}
-            >
-              Request a One-Time Fix <ArrowRight size={20} />
-            </a>
-          </div>
+        {/* Pay-Per-Fix */}
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold mb-3" style={{ color: "#fbbf24" }}>Pay-Per-Fix</h2>
         </div>
-
-        {/* Special Operations Section */}
-        <div
-          className="rounded-2xl p-12 mb-16"
-          style={{
-            background: "linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%)",
-            border: "3px solid #fbbf24",
-            boxShadow: "0 0 60px rgba(251, 191, 36, 0.3)",
-          }}
-        >
-          <div className="flex items-start gap-6">
-            <Code size={64} style={{ color: "#fbbf24", flexShrink: 0 }} />
-            <div>
-              <h2 className="text-4xl font-bold mb-4" style={{ color: "#fbbf24" }}>
-                Special Operations
-              </h2>
-              <p className="text-xl mb-6" style={{ color: "#f5f5f4" }}>
-                Elite-level projects beyond standard IT support. Custom development, complex integrations, and mission-critical work.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <h4 className="font-bold mb-2" style={{ color: "#fbbf24" }}>What Qualifies:</h4>
-                  <ul className="space-y-2">
-                    {[
-                      "Custom web applications",
-                      "API development & integration",
-                      "Database architecture",
-                      "Automation systems",
-                      "CRM/funnel building",
-                      "Complex migrations",
-                    ].map((item, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <Check size={18} style={{ color: "#10b981" }} />
-                        <span style={{ color: "#f5f5f4" }}>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-bold mb-2" style={{ color: "#fbbf24" }}>Pricing:</h4>
-                  <ul className="space-y-2" style={{ color: "#f5f5f4" }}>
-                    <li>• Small projects: $499 - $1,500</li>
-                    <li>• Medium projects: $1,500 - $5,000</li>
-                    <li>• Large projects: $5,000+</li>
-                    <li>• Custom quote based on scope</li>
-                  </ul>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          {payPerFix.map((option) => (
+            <div key={option.name} className="rounded-xl p-6 flex flex-col justify-between" style={{ background: "rgba(0, 0, 0, 0.7)", border: "2px solid rgba(217, 119, 6, 0.4)" }}>
+              <div>
+                <h3 className="text-2xl font-bold mb-2" style={{ color: "#fbbf24" }}>{option.name}</h3>
+                <p className="text-3xl font-bold mb-4" style={{ color: "#fbbf24" }}>${option.price}</p>
+                <ul className="space-y-2 mb-6 text-left">
+                  {option.examples.map((ex, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm" style={{ color: "#f5f5f4" }}><Check size={14} style={{ color: "#10b981" }} />{ex}</li>
+                  ))}
+                </ul>
               </div>
-
-              <a
-                href="/contact"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold transition-all"
-                style={{
-                  background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                  color: "#000",
-                  boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
-                }}
-              >
-                Request Special Operations Quote <ArrowRight size={20} />
-              </a>
+              <a href={option.ctaLink} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 rounded-lg font-bold"
+                style={{ border: "2px solid #fbbf24", color: "#fbbf24" }}>Buy {option.name}</a>
             </div>
-          </div>
-        </div>
-
-        {/* Remote Support Info */}
-        <div
-          className="rounded-xl p-8 mb-16"
-          style={{
-            background: "rgba(0, 0, 0, 0.7)",
-            border: "2px solid rgba(217, 119, 6, 0.4)",
-          }}
-        >
-          <div className="flex items-start gap-4 mb-6">
-            <Clock size={32} style={{ color: "#fbbf24" }} />
-            <div>
-              <h3 className="text-2xl font-bold mb-2" style={{ color: "#fbbf24" }}>
-                Remote Support Included
-              </h3>
-              <p style={{ color: "#f5f5f4" }}>
-                Made Man and Don members get remote support sessions using industry-standard tools.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold mb-3" style={{ color: "#fbbf24" }}>Made Man Remote Support:</h4>
-              <ul className="space-y-2" style={{ color: "#f5f5f4", fontSize: "15px" }}>
-                <li>• Chrome Remote Desktop or AnyDesk</li>
-                <li>• Schedule via support ticket</li>
-                <li>• 24-48 hour response time</li>
-                <li>• Standard session scheduling</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-3" style={{ color: "#fbbf24" }}>Don Priority Remote Support:</h4>
-              <ul className="space-y-2" style={{ color: "#f5f5f4", fontSize: "15px" }}>
-                <li>• Your choice of remote tool</li>
-                <li>• Direct scheduling link (same-day)</li>
-                <li>• Priority queue access</li>
-                <li>• Emergency after-hours available</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <a
-              href="/help/remote-support"
-              className="inline-flex items-center gap-2 font-semibold"
-              style={{ color: "#fbbf24" }}
-            >
-              Learn about remote support <ArrowRight size={18} />
-            </a>
-          </div>
-        </div>
-
-        {/* FAQ Section with Schema */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8" style={{ color: "#fbbf24" }}>
-            Common Questions
-          </h2>
-
-          <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": [
-                {
-                  "@type": "Question",
-                  "name": "What's the difference between Made Man and Don?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Made Man covers standard IT support (email, WiFi, printers, slow computers). Don includes everything Made Man has PLUS web development, custom automation, API work, and direct priority access to The HIT Man himself."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "Can I upgrade from Made Man to Don?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Absolutely. You can upgrade anytime and we'll pro-rate your current subscription."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "What if I just need one fix?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Check out our pay-per-fix options! Quick Hit ($69), Standard Job ($99), or Heavy Operation ($199) for one-time problems."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "Do you offer refunds?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes. If we can't solve your problem, you don't pay. Made Man and Don subscriptions can be cancelled anytime with no penalties."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "How does remote support work?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "We use Chrome Remote Desktop or AnyDesk. You'll download the tool, we'll connect to your screen, and fix the issue while you watch. You control access and can end the session anytime."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "What counts as 'development work'?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Anything involving code, websites, databases, APIs, or custom automation. That's Don tier or Special Operations. Made Man is for standard IT fixes only."
-                  }
-                }
-              ]
-            })}
-          </script>
-
-          <div className="space-y-4 max-w-4xl mx-auto">
-            {[
-              {
-                q: "What's the difference between Made Man and Don?",
-                a: "Made Man covers standard IT support (email, WiFi, printers, slow computers). Don includes everything Made Man has PLUS web development, custom automation, API work, and direct priority access to The HIT Man himself.",
-              },
-              {
-                q: "Can I upgrade from Made Man to Don?",
-                a: "Absolutely. You can upgrade anytime and we'll pro-rate your current subscription.",
-              },
-              {
-                q: "What if I just need one fix?",
-                a: "Check out our pay-per-fix options above! Quick Hit ($69), Standard Job ($99), or Heavy Operation ($199) for one-time problems.",
-              },
-              {
-                q: "Do you offer refunds?",
-                a: "Yes. If we can't solve your problem, you don't pay. Made Man and Don subscriptions can be cancelled anytime with no penalties.",
-              },
-              {
-                q: "How does remote support work?",
-                a: "We use Chrome Remote Desktop or AnyDesk. You'll download the tool, we'll connect to your screen, and fix the issue while you watch. You control access and can end the session anytime.",
-              },
-              {
-                q: "What counts as 'development work'?",
-                a: "Anything involving code, websites, databases, APIs, or custom automation. That's Don tier or Special Operations. Made Man is for standard IT fixes only.",
-              },
-            ].map((faq, idx) => (
-              <div
-                key={idx}
-                className="rounded-lg p-6"
-                style={{
-                  background: "rgba(0, 0, 0, 0.6)",
-                  border: "1px solid rgba(217, 119, 6, 0.3)",
-                }}
-              >
-                <h4 className="font-bold mb-2" style={{ color: "#fbbf24", fontSize: "18px" }}>
-                  {faq.q}
-                </h4>
-                <p style={{ color: "#f5f5f4", fontSize: "15px", lineHeight: "1.6" }}>
-                  {faq.a}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div
-          className="rounded-2xl p-12 text-center"
-          style={{
-            background: "linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(146, 64, 14, 0.2) 100%)",
-            border: "2px solid #fbbf24",
-          }}
-        >
-          <h2 className="text-4xl font-bold mb-4" style={{ color: "#fbbf24" }}>
-            Ready to Get Help?
-          </h2>
-          <p className="text-xl mb-8" style={{ color: "#f5f5f4" }}>
-            Start with free AI diagnosis or choose your subscription tier.
-          </p>
-
-          <div className="flex flex-wrap gap-4 justify-center">
-            <a
-              href="/"
-              className="px-8 py-4 rounded-lg font-bold transition-all"
-              style={{
-                background: "rgba(120, 113, 108, 0.5)",
-                color: "#fbbf24",
-                border: "2px solid rgba(217, 119, 6, 0.5)",
-              }}
-            >
-              Try AI Chat (Free)
-            </a>
-            <a
-              href="/contact"
-              className="px-8 py-4 rounded-lg font-bold transition-all"
-              style={{
-                background: "linear-gradient(135deg, #fbbf24 0%, #d97706 100%)",
-                color: "#000",
-                boxShadow: "0 0 20px rgba(251, 191, 36, 0.4)",
-              }}
-            >
-              Contact The HIT Man
-            </a>
-          </div>
+          ))}
         </div>
       </div>
-
-      {/* Footer */}
-      <footer
-        className="relative z-10 border-t py-8"
-        style={{
-          background: "rgba(0, 0, 0, 0.9)",
-          borderTopColor: "rgba(217, 119, 6, 0.3)",
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p style={{ color: "#78716c", fontSize: "14px" }}>
-            © 2025 Help IT. Just call the HIT Man. We'll take care of IT.
-          </p>
-          <div className="flex gap-6 justify-center mt-4">
-            <a href="tel:407-504-1287" style={{ color: "#d97706" }}>407-504-1287</a>
-            <a href="mailto:support@helpitapp.com" style={{ color: "#d97706" }}>support@helpitapp.com</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
