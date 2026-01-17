@@ -10,6 +10,7 @@ import ContactPage from "./pages/ContactPage";
 import HelpHub from "./pages/HelpHub";
 import SetupHubPage from "./pages/SetupHubPage";
 import RemoteSupportGuide from "./pages/RemoteSupportGuide";
+import WelcomePage from "./pages/WelcomePage"; // Added for post-payment redirect
 
 // Pillar pages (all created)
 import EmailLoginHelp from "./pages/EmailLoginHelp";
@@ -36,6 +37,7 @@ import CantDownloadApps from "./pages/CantDownloadApps";
 function App() {
   return (
     <BrowserRouter>
+      {/* SiteHeader is shared across all routes */}
       <SiteHeader />
       
       <Routes>
@@ -46,6 +48,9 @@ function App() {
         <Route path="/help" element={<HelpHub />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/help/remote-support" element={<RemoteSupportGuide />} />
+        
+        {/* Post-Payment Redirection Route */}
+        <Route path="/welcome" element={<WelcomePage />} />
         
         {/* Pillar pages - ALL WORKING */}
         <Route path="/help/email-login" element={<EmailLoginHelp />} />
@@ -68,6 +73,9 @@ function App() {
         <Route path="/help/wifi-wont-connect" element={<WiFiWontConnect />} />
         <Route path="/help/slow-computer-fix" element={<SlowComputerFix />} />
         <Route path="/help/cant-download-apps" element={<CantDownloadApps />} />
+
+        {/* Fallback to Home if route doesn't exist */}
+        <Route path="*" element={<HomePage />} />
       </Routes>
     </BrowserRouter>
   );
